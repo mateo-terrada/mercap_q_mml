@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Escritorio — Práctica diaria de mercado de capitales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- Cinta de progreso superior, estilo "panel de cotizaciones" -->
+<div class="ticker-bar" id="tickerBar" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
+
+<div class="app-shell">
+
+  <!-- ============ HEADER ============ -->
+  <header class="app-header">
+    <div class="header-left">
+      <span class="brand-mark">§</span>
+      <div class="brand-text">
+        <span class="brand-title">El Escritorio</span>
+        <span class="brand-subtitle">Práctica diaria · Mercado de capitales</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="streak-pill" id="streakPill" title="Racha de aciertos consecutivos">
+        <span class="streak-flame">●</span>
+        <span id="streakCount">0</span>
+      </div>
+      <button class="icon-btn" id="statsBtn" aria-label="Ver mi progreso">Mi progreso</button>
+    </div>
+  </header>
+
+  <main id="mainContent">
+
+    <!-- ============ PANTALLA: INICIO ============ -->
+    <section class="screen" id="screen-home" data-screen="home">
+      <div class="home-grid">
+
+        <div class="home-intro">
+          <p class="eyebrow">Edición de hoy</p>
+          <h1 class="home-title">Sentate a practicar diez minutos.</h1>
+          <p class="home-lede">
+            Preguntas reales de mercado de capitales argentino: renta fija, renta variable,
+            operatoria, macro y los casos de cliente que parecen pavada y no lo son.
+            Elegí una sesión corta o entrá directo a una categoría.
+          </p>
+
+          <div class="quick-actions">
+            <button class="btn btn-primary btn-large" id="startQuickSession">
+              Empezar sesión de hoy
+              <span class="btn-meta">12 preguntas · ~10 min</span>
+            </button>
+            <button class="btn btn-ghost" id="browseCategories">Elegir categoría</button>
+          </div>
+
+          <div class="resume-banner" id="resumeBanner" hidden>
+            <span>Tenés una sesión sin terminar.</span>
+            <button class="link-btn" id="resumeSessionBtn">Continuarla →</button>
+          </div>
+        </div>
+
+        <aside class="home-stats" aria-label="Resumen de tu progreso">
+          <div class="stat-card">
+            <span class="stat-value" id="statTotalAnswered">0</span>
+            <span class="stat-label">Preguntas respondidas</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="statAccuracy">—</span>
+            <span class="stat-label">Aciertos totales</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="statBestStreak">0</span>
+            <span class="stat-label">Mejor racha</span>
+          </div>
+        </aside>
+
+      </div>
+
+      <div class="category-overview">
+        <div class="section-heading">
+          <h2>Categorías</h2>
+          <span class="section-note">Tu dominio por tema, actualizado en cada sesión</span>
+        </div>
+        <div class="category-grid" id="categoryGrid"><!-- inyectado por JS --></div>
+      </div>
+    </section>
+
+    <!-- ============ PANTALLA: CONFIGURAR SESIÓN ============ -->
+    <section class="screen" id="screen-setup" data-screen="setup" hidden>
+      <button class="back-link" data-back-to="home">← Volver al inicio</button>
+      <h1 class="screen-title">Armá tu sesión</h1>
+      <p class="screen-lede">Elegí qué practicar. Podés mezclar categorías o quedarte en una sola.</p>
+
+      <div class="setup-panel">
+        <div class="setup-block">
+          <h3 class="setup-block-title">Categorías</h3>
+          <div class="chip-group" id="categoryChips"><!-- inyectado por JS --></div>
+        </div>
+
+        <div class="setup-block">
+          <h3 class="setup-block-title">Dificultad</h3>
+          <div class="chip-group" id="difficultyChips">
+            <button class="chip chip-active" data-difficulty="todas">Todas</button>
+            <button class="chip" data-difficulty="basica">Básica</button>
+            <button class="chip" data-difficulty="intermedia">Intermedia</button>
+            <button class="chip" data-difficulty="avanzada">Avanzada</button>
+          </div>
+        </div>
+
+        <div class="setup-block">
+          <h3 class="setup-block-title">Cantidad de preguntas</h3>
+          <div class="chip-group" id="lengthChips">
+            <button class="chip" data-length="8">8 · rápida</button>
+            <button class="chip chip-active" data-length="12">12 · estándar</button>
+            <button class="chip" data-length="20">20 · a fondo</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-large" id="startConfiguredSession">Empezar práctica</button>
+    </section>
+
+    <!-- ============ PANTALLA: SESIÓN (preguntas) ============ -->
+    <section class="screen" id="screen-session" data-screen="session" hidden>
+      <div class="session-topbar">
+        <button class="back-link" id="exitSessionBtn">✕ Salir</button>
+        <div class="session-progress">
+          <div class="session-progress-track">
+            <div class="session-progress-fill" id="sessionProgressFill"></div>
+          </div>
+          <span class="session-progress-label" id="sessionProgressLabel">1 / 12</span>
+        </div>
+        <div class="session-score" id="sessionScore">0 ✓</div>
+      </div>
+
+      <div class="question-card" id="questionCard">
+        <div class="question-meta">
+          <span class="tag tag-category" id="qCategory">Renta Fija</span>
+          <span class="tag tag-difficulty" id="qDifficulty">básica</span>
+          <span class="tag tag-subtema" id="qSubtema">Subtema</span>
+        </div>
+
+        <p class="question-text" id="qEnunciado">Cargando pregunta…</p>
+
+        <!-- Opciones multiple choice -->
+        <div class="options-list" id="optionsList"></div>
+
+        <!-- Área de caso abierto -->
+        <div class="open-case" id="openCaseArea" hidden>
+          <textarea
+            class="open-case-textarea"
+            id="openCaseTextarea"
+            placeholder="Escribí tu respuesta acá, como si se la mandaras a un cliente o la dijeras en voz alta. No hay apuro — tomate el tiempo que necesites."
+            rows="6"
+          ></textarea>
+          <button class="btn btn-primary" id="revealModelAnswer">Comparar con la respuesta modelo</button>
+        </div>
+
+        <!-- Feedback / explicación -->
+        <div class="feedback-panel" id="feedbackPanel" hidden>
+          <div class="feedback-header" id="feedbackHeader">
+            <span class="feedback-icon" id="feedbackIcon">✓</span>
+            <span class="feedback-title" id="feedbackTitle">Correcto</span>
+          </div>
+          <p class="feedback-body" id="feedbackBody"></p>
+          <button class="btn btn-primary btn-large" id="nextQuestionBtn">Siguiente pregunta →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PANTALLA: RESULTADOS DE SESIÓN ============ -->
+    <section class="screen" id="screen-results" data-screen="results" hidden>
+      <div class="results-panel">
+        <p class="eyebrow" id="resultsEyebrow">Sesión completa</p>
+        <h1 class="results-title" id="resultsTitle">Buen trabajo.</h1>
+        <p class="results-lede" id="resultsLede"></p>
+
+        <div class="results-stats">
+          <div class="stat-card">
+            <span class="stat-value" id="resultsScore">0/0</span>
+            <span class="stat-label">Respuestas correctas</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="resultsStreak">0</span>
+            <span class="stat-label">Mejor racha de hoy</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="resultsTime">0 min</span>
+            <span class="stat-label">Tiempo dedicado</span>
+          </div>
+        </div>
+
+        <div class="results-review" id="resultsReview">
+          <h3>Para repasar</h3>
+          <div class="review-list" id="reviewList"><!-- inyectado por JS --></div>
+        </div>
+
+        <div class="results-actions">
+          <button class="btn btn-primary btn-large" id="playAgainBtn">Otra sesión</button>
+          <button class="btn btn-ghost" id="backHomeBtn">Volver al inicio</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PANTALLA: MI PROGRESO ============ -->
+    <section class="screen" id="screen-stats" data-screen="stats" hidden>
+      <button class="back-link" data-back-to="home">← Volver al inicio</button>
+      <h1 class="screen-title">Mi progreso</h1>
+      <p class="screen-lede">Así viene tu dominio por categoría desde que empezaste.</p>
+
+      <div class="stats-grid" id="statsGrid"><!-- inyectado por JS --></div>
+
+      <div class="setup-block" style="margin-top: 2.5rem;">
+        <h3 class="setup-block-title">Datos guardados en este navegador</h3>
+        <p class="screen-lede" style="margin-bottom: 1rem;">
+          Tu progreso se guarda localmente en este dispositivo y navegador. Si abrís la práctica
+          desde otra computadora o celular, vas a empezar de cero ahí.
+        </p>
+        <button class="btn btn-ghost btn-danger" id="resetProgressBtn">Borrar todo mi progreso</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <span>Material de estudio personal. Construido a partir del programa de capacitación propio — no reemplaza el asesoramiento profesional ni constituye recomendación de inversión.</span>
+  </footer>
+
+</div>
+
+<!-- Modal de confirmación (borrar progreso) -->
+<div class="modal-overlay" id="confirmModal" hidden style="display: none;">
+  <div class="modal-box">
+    <h3>¿Borrar todo el progreso?</h3>
+    <p>Esto va a eliminar tu historial de respuestas, rachas y estadísticas guardadas en este navegador. No se puede deshacer.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelResetBtn">Cancelar</button>
+      <button class="btn btn-danger" id="confirmResetBtn">Sí, borrar todo</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/preguntas.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
