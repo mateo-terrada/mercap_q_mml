@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador — El Escritorio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Variables y reset — misma paleta que El Escritorio
+   ============================================================ */
+:root {
+  --paper:        #F7F4EC;
+  --paper-raised: #FBF9F3;
+  --ink:          #1C2B2D;
+  --ink-soft:     #4A5759;
+  --ink-faint:    #8A9294;
+  --teal:         #2D6A6E;
+  --teal-deep:    #1F4D50;
+  --olive:        #7A8B5C;
+  --olive-deep:   #5C6A43;
+  --terracotta:   #A8453A;
+  --terracotta-deep: #7E332A;
+  --rule:         #D8D2C0;
+  --rule-strong:  #C2BBA4;
+  --gold:         #B68A3D;
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-sans:  "Inter", system-ui, sans-serif;
+  --font-mono:  "JetBrains Mono", "SF Mono", Consolas, monospace;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --shadow-card: 0 1px 2px rgba(28,43,45,.04), 0 4px 16px rgba(28,43,45,.07);
+  --shadow-raised: 0 2px 4px rgba(28,43,45,.06), 0 12px 32px rgba(28,43,45,.11);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--gold);color:var(--paper)}
+button{font-family:inherit;cursor:pointer}
+
+/* ============================================================
+   Layout
+   ============================================================ */
+.app-shell{max-width:980px;margin:0 auto;padding:0 1.5rem 4rem}
+
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 0 1.25rem;border-bottom:1px solid var(--rule);margin-bottom:2.5rem}
+.header-left{display:flex;align-items:center;gap:.75rem}
+.brand-mark{font-family:var(--font-serif);font-size:1.6rem;font-weight:600;color:var(--teal);width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--teal);border-radius:50%;flex-shrink:0}
+.brand-text{display:flex;flex-direction:column;line-height:1.2}
+.brand-title{font-family:var(--font-serif);font-weight:600;font-size:1.15rem}
+.brand-subtitle{font-size:.72rem;color:var(--ink-faint);letter-spacing:.02em}
+.back-nav{background:none;border:1px solid var(--rule);border-radius:999px;padding:.45rem .95rem;font-size:.82rem;font-weight:600;color:var(--ink-soft);text-decoration:none;transition:border-color .15s,color .15s}
+.back-nav:hover{border-color:var(--teal);color:var(--teal)}
+
+/* ============================================================
+   Pantalla selector
+   ============================================================ */
+.selector-intro{margin-bottom:2.5rem}
+.eyebrow{font-family:var(--font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:.75rem;font-weight:600}
+.selector-title{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:600;line-height:1.12;margin-bottom:.9rem}
+.selector-lede{color:var(--ink-soft);max-width:54ch;font-size:1.02rem}
+
+.tipo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.1rem;margin-bottom:2.5rem}
+.tipo-card{background:var(--paper-raised);border:1.5px solid var(--rule);border-radius:var(--radius-lg);padding:1.5rem 1.6rem;cursor:pointer;text-align:left;transition:border-color .15s,transform .15s,box-shadow .15s}
+.tipo-card:hover{border-color:var(--teal);transform:translateY(-2px);box-shadow:var(--shadow-card)}
+.tipo-card:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.tipo-icon{font-size:1.75rem;margin-bottom:.9rem;display:block}
+.tipo-name{font-family:var(--font-serif);font-weight:600;font-size:1.15rem;margin-bottom:.4rem}
+.tipo-desc{font-size:.88rem;color:var(--ink-soft);line-height:1.5}
+.tipo-count{font-family:var(--font-mono);font-size:.72rem;color:var(--ink-faint);margin-top:.85rem}
+
+/* ============================================================
+   Pantalla de ejercicio
+   ============================================================ */
+.ejercicio-shell{display:flex;flex-direction:column;gap:1.5rem}
+
+.ejercicio-topbar{display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap}
+.btn-ghost-sm{background:none;border:1px solid var(--rule-strong);border-radius:999px;padding:.4rem .85rem;font-size:.82rem;font-weight:600;color:var(--ink-soft);transition:border-color .15s,color .15s}
+.btn-ghost-sm:hover{border-color:var(--teal);color:var(--teal)}
+.ejercicio-nav{display:flex;align-items:center;gap:.5rem;margin-left:auto}
+.nav-dots{display:flex;gap:.35rem}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--rule-strong);border:none;cursor:pointer;transition:background .15s}
+.nav-dot.activo{background:var(--teal)}
+.nav-counter{font-family:var(--font-mono);font-size:.8rem;color:var(--ink-faint);margin-left:.5rem}
+
+.ejercicio-card{background:var(--paper-raised);border:1px solid var(--rule);border-radius:var(--radius-lg);padding:clamp(1.5rem,4vw,2.5rem);box-shadow:var(--shadow-raised)}
+
+.ejercicio-meta{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.4rem}
+.tag{font-family:var(--font-mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;padding:.3rem .65rem;border-radius:999px;font-weight:600}
+.tag-tipo{background:rgba(45,106,110,.12);color:var(--teal-deep)}
+.tag-dif{background:rgba(182,138,61,.15);color:var(--gold)}
+
+.ejercicio-titulo{font-family:var(--font-serif);font-size:clamp(1.05rem,2.5vw,1.3rem);font-weight:600;color:var(--ink);margin-bottom:.5rem}
+.ejercicio-consigna{font-size:.97rem;color:var(--ink-soft);line-height:1.6;margin-bottom:1.5rem}
+
+/* ============================================================
+   SVG curva de bonos
+   ============================================================ */
+.curva-container{background:var(--paper);border:1px solid var(--rule);border-radius:var(--radius-md);padding:1rem 1.25rem 1.5rem;margin-bottom:1.5rem;overflow:hidden}
+.curva-titulo{font-family:var(--font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);margin-bottom:.75rem;font-weight:600}
+.curva-svg{width:100%;overflow:visible}
+
+/* Ejes y etiquetas SVG */
+.axis-line{stroke:var(--rule-strong);stroke-width:1}
+.grid-line{stroke:var(--rule);stroke-width:.5;stroke-dasharray:3,4}
+.axis-label{font-family:"Inter",sans-serif;font-size:11px;fill:#8A9294}
+.axis-title{font-family:"Inter",sans-serif;font-size:11px;fill:#4A5759;font-weight:600}
+.curve-line{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.curve-gd{stroke:#2D6A6E}
+.curve-al{stroke:#8A9294}
+.bond-dot{r:5;stroke-width:1.5;stroke:var(--paper)}
+.bond-dot-gd{fill:#2D6A6E}
+.bond-dot-al{fill:#8A9294}
+.bond-dot-highlight{fill:var(--gold);stroke:var(--gold);stroke-width:1}
+.bond-label{font-family:"Inter",sans-serif;font-size:10.5px;font-weight:600}
+.bond-label-gd{fill:#2D6A6E}
+.bond-label-al{fill:#4A5759}
+.bond-label-highlight{fill:#7E5C1A;font-size:11px}
+.legend-dot{r:5}
+.legend-text{font-family:"Inter",sans-serif;font-size:11px;fill:#4A5759}
+
+/* ============================================================
+   Caja de puntas
+   ============================================================ */
+.caja-wrapper{display:flex;gap:1.25rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.caja-panel{flex:1;min-width:240px}
+.caja-header{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:600;margin-bottom:.6rem}
+.caja-table{width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:.88rem}
+.caja-table th{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);padding:.3rem .5rem;text-align:right;border-bottom:1px solid var(--rule)}
+.caja-table th:first-child{text-align:left}
+.caja-table td{padding:.4rem .5rem;text-align:right;border-bottom:1px solid rgba(216,210,192,.5)}
+.caja-table td:first-child{text-align:left}
+.caja-table .bid-qty{color:var(--olive-deep)}
+.caja-table .bid-px{color:var(--olive-deep);font-weight:600}
+.caja-table .ask-px{color:var(--terracotta);font-weight:600}
+.caja-table .ask-qty{color:var(--terracotta)}
+.caja-table tr.best-line td{background:rgba(45,106,110,.06)}
+.spread-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(182,138,61,.15);border-radius:999px;padding:.3rem .75rem;font-family:var(--font-mono);font-size:.78rem;color:var(--gold);font-weight:600;margin-bottom:.85rem}
+.caja-meta{font-size:.82rem;color:var(--ink-faint);margin-top:.5rem}
+
+/* ============================================================
+   Rotación / datos de comparación
+   ============================================================ */
+.rotacion-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+@media(max-width:600px){.rotacion-grid{grid-template-columns:1fr}}
+.rotacion-card{background:var(--paper);border:1.5px solid var(--rule);border-radius:var(--radius-md);padding:1.1rem 1.2rem}
+.rotacion-card.highlighted{border-color:var(--teal);background:rgba(45,106,110,.04)}
+.rotacion-nombre{font-family:var(--font-serif);font-weight:600;font-size:1.05rem;margin-bottom:.8rem;display:flex;justify-content:space-between;align-items:center}
+.rotacion-tag{font-family:var(--font-mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .5rem;border-radius:999px;background:rgba(45,106,110,.12);color:var(--teal-deep)}
+.rotacion-dato{display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px solid var(--rule);font-size:.9rem}
+.rotacion-dato:last-child{border-bottom:none}
+.rotacion-dato .label{color:var(--ink-soft)}
+.rotacion-dato .valor{font-family:var(--font-mono);font-weight:600;color:var(--ink)}
+.rotacion-dato .valor.bueno{color:var(--olive-deep)}
+.rotacion-dato .valor.atencion{color:var(--gold)}
+.contexto-box{background:rgba(45,106,110,.06);border-left:3px solid var(--teal);border-radius:0 var(--radius-md) var(--radius-md) 0;padding:.85rem 1rem;margin-bottom:1.4rem;font-size:.9rem;color:var(--ink-soft);line-height:1.6}
+.contexto-box strong{color:var(--ink)}
+
+/* ============================================================
+   Área de respuesta
+   ============================================================ */
+.respuesta-section{border-top:1px solid var(--rule);padding-top:1.4rem;margin-top:.5rem}
+.respuesta-label{font-size:.82rem;font-weight:600;color:var(--ink-soft);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.04em;font-family:var(--font-mono)}
+
+/* Multiple choice */
+.opciones-lista{display:flex;flex-direction:column;gap:.6rem}
+.opcion-btn{display:flex;align-items:flex-start;gap:.8rem;text-align:left;background:var(--paper);border:1.5px solid var(--rule-strong);border-radius:var(--radius-md);padding:.85rem 1rem;font-size:.94rem;line-height:1.45;color:var(--ink);transition:border-color .15s,background .15s;width:100%}
+.opcion-btn:hover:not(:disabled){border-color:var(--teal);background:rgba(45,106,110,.04)}
+.opcion-btn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.opcion-letra{font-family:var(--font-mono);font-weight:700;font-size:.8rem;color:var(--ink-faint);flex-shrink:0;width:1.4rem;height:1.4rem;border:1.5px solid var(--rule-strong);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:.05rem}
+.opcion-btn.correcta{border-color:var(--olive);background:rgba(122,139,92,.12)}
+.opcion-btn.correcta .opcion-letra{background:var(--olive);border-color:var(--olive);color:var(--paper)}
+.opcion-btn.incorrecta{border-color:var(--terracotta);background:rgba(168,69,58,.08)}
+.opcion-btn.incorrecta .opcion-letra{background:var(--terracotta);border-color:var(--terracotta);color:var(--paper)}
+.opcion-btn:disabled{cursor:default}
+.opcion-btn:disabled:not(.correcta):not(.incorrecta){opacity:.55}
+
+/* Textarea abierta */
+.respuesta-textarea{width:100%;background:var(--paper);border:1.5px solid var(--rule-strong);border-radius:var(--radius-md);padding:.9rem 1rem;font-size:.94rem;line-height:1.55;color:var(--ink);resize:vertical;font-family:inherit;margin-bottom:.85rem}
+.respuesta-textarea:focus-visible{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+
+/* Feedback */
+.feedback-panel{margin-top:1.4rem;padding-top:1.3rem;border-top:1px solid var(--rule);animation:feedback-in .25s ease}
+@keyframes feedback-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.feedback-header{display:flex;align-items:center;gap:.55rem;margin-bottom:.7rem}
+.feedback-icon{width:1.5rem;height:1.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:var(--paper);flex-shrink:0}
+.feedback-panel.correcta .feedback-icon{background:var(--olive)}
+.feedback-panel.incorrecta .feedback-icon{background:var(--terracotta)}
+.feedback-panel.neutral .feedback-icon{background:var(--teal)}
+.feedback-titulo{font-family:var(--font-serif);font-size:1.1rem;font-weight:600}
+.feedback-panel.correcta .feedback-titulo{color:var(--olive-deep)}
+.feedback-panel.incorrecta .feedback-titulo{color:var(--terracotta-deep)}
+.feedback-panel.neutral .feedback-titulo{color:var(--teal-deep)}
+.feedback-texto{font-size:.95rem;line-height:1.65;color:var(--ink-soft);white-space:pre-line;margin-bottom:1.3rem}
+
+/* ============================================================
+   Botones principales
+   ============================================================ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border-radius:var(--radius-md);padding:.78rem 1.4rem;font-weight:600;font-size:.93rem;border:1.5px solid transparent;transition:all .15s ease;cursor:pointer}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:2px solid var(--teal-deep);outline-offset:2px}
+.btn-primary{background:var(--teal);color:var(--paper);border-color:var(--teal)}
+.btn-primary:hover{background:var(--teal-deep);border-color:var(--teal-deep)}
+.btn-outline{background:transparent;color:var(--ink-soft);border-color:var(--rule-strong)}
+.btn-outline:hover{border-color:var(--teal);color:var(--teal)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.25rem}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.app-footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--rule);font-size:.76rem;color:var(--ink-faint)}
+@media(max-width:600px){.app-shell{padding:0 1.1rem 3rem}.rotacion-grid{grid-template-columns:1fr}.caja-wrapper{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="app-header">
+    <div class="header-left">
+      <span class="brand-mark">§</span>
+      <div class="brand-text">
+        <span class="brand-title">El Escritorio</span>
+        <span class="brand-subtitle">Simulador de mercado</span>
+      </div>
+    </div>
+    <a href="index.html" class="back-nav">← Volver al inicio</a>
+  </header>
+
+  <main>
+
+    <!-- ===== PANTALLA SELECTOR ===== -->
+    <section id="screen-selector">
+      <div class="selector-intro">
+        <p class="eyebrow">Práctica aplicada</p>
+        <h1 class="selector-title">Decidir con datos reales en la mano.</h1>
+        <p class="selector-lede">No alcanza con saber el concepto — acá practicás leer una curva, interpretar un libro de órdenes o evaluar si conviene rotar, con los mismos datos que ves en la pantalla del mercado.</p>
+      </div>
+
+      <div class="tipo-grid">
+        <button class="tipo-card" onclick="abrirTipo('curva')">
+          <span class="tipo-icon">📈</span>
+          <div class="tipo-name">Curvas de bonos</div>
+          <div class="tipo-desc">Leés una curva de rendimientos real y respondés preguntas sobre posicionamiento, outliers y sensibilidad a tasas.</div>
+          <div class="tipo-count">5 escenarios</div>
+        </button>
+        <button class="tipo-card" onclick="abrirTipo('caja')">
+          <span class="tipo-icon">📋</span>
+          <div class="tipo-name">Caja de puntas</div>
+          <div class="tipo-desc">Interpretás un libro de órdenes y decidís tipo de orden, precio límite y cómo comunicarle el costo al cliente.</div>
+          <div class="tipo-count">5 escenarios</div>
+        </button>
+        <button class="tipo-card" onclick="abrirTipo('rotacion')">
+          <span class="tipo-icon">⇄</span>
+          <div class="tipo-name">Decisiones de rotación</div>
+          <div class="tipo-desc">Con dos instrumentos en pantalla y contexto macro, evaluás si conviene rotar, por qué y qué le decís al cliente.</div>
+          <div class="tipo-count">5 escenarios</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== PANTALLA EJERCICIO ===== -->
+    <section id="screen-ejercicio" hidden>
+      <div class="ejercicio-shell">
+        <div class="ejercicio-topbar">
+          <button class="btn-ghost-sm" onclick="volverSelector()">← Tipos de ejercicio</button>
+          <div class="ejercicio-nav">
+            <div class="nav-dots" id="navDots"></div>
+            <span class="nav-counter" id="navCounter"></span>
+          </div>
+        </div>
+        <div class="ejercicio-card" id="ejercicioCard">
+          <!-- inyectado por JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    Datos de referencia basados en informes Inviu Research (feb–jun 2026). Los precios y yields son ilustrativos para práctica — no constituyen recomendación de inversión.
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   BANCO DE ESCENARIOS — datos reales de los informes
+   ============================================================ */
+
+const ESCENARIOS = {
+
+  /* ---- CURVAS DE BONOS ---- */
+  curva: [
+    {
+      id: "curva-01",
+      titulo: "Soberanos hard dollar — dos familias",
+      dificultad: "intermedia",
+      consigna: "La curva muestra los bonos soberanos argentinos en dólares. Los puntos verdes son Globales (ley NY / GDs), los grises son Bonares (ley argentina / ALs). Observá la curva y respondé.",
+      curva: {
+        xLabel: "Duration modificada",
+        yLabel: "Yield",
+        xMin: 0.8, xMax: 6.8, yMin: 4.0, yMax: 11.0,
+        series: [
+          {
+            nombre: "Globales (ley NY)", clase: "curve-gd", dotClase: "bond-dot-gd", labelClase: "bond-label-gd",
+            bonos: [
+              { ticker: "GD29", md: 1.38, yield: 4.85 },
+              { ticker: "GD30", md: 1.55, yield: 5.98 },
+              { ticker: "GD35", md: 4.55, yield: 8.49 },
+              { ticker: "GD38", md: 4.52, yield: 8.32 },
+              { ticker: "GD41", md: 5.60, yield: 8.63 },
+              { ticker: "GD46", md: 6.45, yield: 8.40 }
+            ]
+          },
+          {
+            nombre: "Bonares (ley AR)", clase: "curve-al", dotClase: "bond-dot-al", labelClase: "bond-label-al",
+            bonos: [
+              { ticker: "AO27", md: 1.10, yield: 4.48 },
+              { ticker: "AL29", md: 1.28, yield: 6.21 },
+              { ticker: "AL30", md: 1.72, yield: 7.18 },
+              { ticker: "A028", md: 1.98, yield: 8.33 },
+              { ticker: "AN29", md: 2.50, yield: 8.62 },
+              { ticker: "AE38", md: 4.92, yield: 9.44 },
+              { ticker: "AL35", md: 5.10, yield: 9.14 },
+              { ticker: "AL41", md: 5.65, yield: 9.24 }
+            ]
+          }
+        ]
+      },
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "Un cliente tiene AL30 (7,18% yield, duration 1,72) y quiere más yield. Le ofrecés el AE38 (9,44%, duration 4,92). ¿Cuál es el matiz más importante que tenés que comunicarle antes de recomendar el cambio?",
+          opciones: [
+            "Que el AE38 rinde más, así que la decisión es directa: conviene cambiar",
+            "Que el AE38 tiene casi 3 veces más duration: por el mismo movimiento de spread, su precio va a subir (o caer) mucho más; el rendimiento extra viene con mayor sensibilidad a tasas",
+            "Que los Bonares siempre son peores que los Globales sin excepción",
+            "Que la duration no afecta al precio mientras el bono no venza"
+          ],
+          correcta: 1,
+          feedback: "Exacto. El diferencial de yield entre AL30 y AE38 es atractivo (~226 bps), pero el diferencial de duration es enorme: de 1,72 a 4,92. Usando la regla de duration como aproximación, si el spread soberano se mueve +100 bps, el AL30 cae ~1,7% de precio; el AE38 cae ~4,9%. El inversor que entra buscando más carry tiene que aceptar también mucha más volatilidad de precio. Siempre comunicar ese trade-off antes de cerrar la operación."
+        },
+        {
+          tipo: "mc",
+          enunciado: "El spread entre GD29 (4,85%) y AL29 (6,21%) es de ~136 bps para bonos con duration casi idéntica. ¿Qué suele explicar que el mercado exija ese spread extra para el bono bajo ley argentina?",
+          opciones: [
+            "Que el AL29 paga más cupón, así que es más caro de emitir",
+            "Que el GD29 tiene ley Nueva York, lo que le da al bonista mejores condiciones legales ante un eventual default; el mercado le pone un precio a esa protección adicional",
+            "Que el AL29 tiene más duration, así que compensa con más yield",
+            "Que los Globales siempre rinden menos porque Argentina los prefiere"
+          ],
+          correcta: 1,
+          feedback: "El diferencial ley NY / ley AR es uno de los spreads más seguidos en el mercado argentino. La jurisdicción importa: con ley Nueva York, el bonista tiene acceso a tribunales extranjeros con mecanismos de ejecución más robustos ante un incumplimiento. El mercado descuenta esa protección con un menor yield exigido para los GDs. No es 'magia' — es precio de riesgo legal."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "Mirá la curva de los Bonares (ALs). El AL30 tiene yield 7,18% y duration 1,72, mientras el AE38 tiene yield 9,44% y duration 4,92, y el AL41 tiene yield 9,24% y duration 5,65. El AE38 rinde más que el AL41 siendo más corto. ¿Qué señal te da eso? ¿Cómo se lo explicarías a un cliente en dos o tres líneas?",
+          feedback: "El AE38 rindiendo más que el AL41 con menor duration es un 'outlier' respecto a la lógica normal de la curva (a más duration, más yield). Eso puede reflejar un atributo específico del bono que el mercado penaliza: diferente estructura de amortización, menor liquidez, o condiciones contractuales particulares. No es una oportunidad automática — es una señal de que hay algo que investigar. Para el cliente: 'Ese bono rinde más de lo que esperaría por su plazo, lo cual puede ser una oportunidad o una advertencia; antes de entrar hay que entender por qué se lo está penalizando.'"
+        }
+      ]
+    },
+
+    {
+      id: "curva-02",
+      titulo: "Curva CER soberanos — leyendo expectativas de inflación",
+      dificultad: "avanzada",
+      consigna: "La curva muestra bonos soberanos ajustados por CER, con su tasa real (yield sobre inflación) y duration. Interpretá lo que te dice sobre las expectativas del mercado.",
+      curva: {
+        xLabel: "Duration modificada",
+        yLabel: "Tasa real (CER+)",
+        xMin: 0.0, xMax: 3.5, yMin: -11.0, yMax: 10.0,
+        series: [
+          {
+            nombre: "Bonos CER soberanos", clase: "curve-gd", dotClase: "bond-dot-gd", labelClase: "bond-label-gd",
+            bonos: [
+              { ticker: "TX26", md: 0.08, yield: -9.78 },
+              { ticker: "X31L6", md: 0.15, yield: -5.56 },
+              { ticker: "X30S6", md: 0.40, yield: -2.79 },
+              { ticker: "TZXO6", md: 0.45, yield: -1.26 },
+              { ticker: "X30N6", md: 0.48, yield: -0.24 },
+              { ticker: "TX26B", md: 0.55, yield: -0.98 },
+              { ticker: "TZXD6", md: 0.62, yield: 0.17 },
+              { ticker: "TZXM7", md: 0.78, yield: 1.77 },
+              { ticker: "TZXY7", md: 0.88, yield: 1.45 },
+              { ticker: "TZXA7", md: 0.90, yield: 1.39 },
+              { ticker: "TZX27", md: 1.00, yield: 2.21 },
+              { ticker: "TZXS7", md: 1.15, yield: 4.23 },
+              { ticker: "TZXD7", md: 1.38, yield: 5.16 },
+              { ticker: "TX28", md: 1.55, yield: 3.98 },
+              { ticker: "TZXM8", md: 1.68, yield: 6.04 },
+              { ticker: "TXMJ9", md: 2.10, yield: 5.45 },
+              { ticker: "TXMJ8", md: 2.30, yield: 4.22, highlight: true },
+              { ticker: "TZX28", md: 2.45, yield: 6.90 },
+              { ticker: "TZXS8", md: 2.80, yield: 7.29 },
+              { ticker: "TZXM9", md: 3.00, yield: 7.43 },
+              { ticker: "DICP", md: 3.15, yield: 7.95 }
+            ]
+          }
+        ]
+      },
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "Los bonos CER de muy corto plazo (TX26, X31L6) muestran tasas reales fuertemente negativas (-9,78% y -5,56%). ¿Qué implica que el mercado acepte tasas reales tan negativas en el tramo corto?",
+          opciones: [
+            "Que esos bonos van a perder valor seguro y nadie debería tenerlos",
+            "Que hay demanda de cobertura de corto plazo contra inflación tan fuerte que el mercado paga un 'seguro': acepta yield negativo a cambio de garantizarse el ajuste CER en el tramo inmediato",
+            "Que el CER de ese plazo no ajusta por inflación",
+            "Que es un error de pantalla que hay que ignorar"
+          ],
+          correcta: 1,
+          feedback: "Tasas reales negativas en el tramo corto suelen reflejar que el mercado está dispuesto a 'pagar' por cobertura de inflación inmediata — hay más demanda de protección que oferta de instrumentos. No significa que el bono sea una mala inversión per se: si la inflación resulta mayor que lo que implica la tasa negativa, el inversor igual puede ganar en términos reales. Es un dato sobre el equilibrio de oferta y demanda de cobertura, no un error."
+        },
+        {
+          tipo: "mc",
+          enunciado: "El TXMJ8 aparece con tasa real de 4,22% mientras bonos de duration similar (TXMJ9 a 5,45%, TZX28 a 6,90%) rinden bastante más. ¿Qué deberías investigar antes de entrar al TXMJ8 por ser 'el más barato de los tres'?",
+          opciones: [
+            "Nada, si rinde menos claramente es el peor y hay que evitarlo siempre",
+            "Si hay una razón que justifique el menor yield: diferente liquidez, estructura de amortización particular, o características contractuales que el mercado esté penalizando o premiando",
+            "Si el bono tiene una tasa de cupón más alta que los otros",
+            "Si tiene más duration, que sería el único motivo posible"
+          ],
+          correcta: 1,
+          feedback: "Que un bono rinda menos que sus vecinos de duration similar no es automáticamente una señal de compra (está 'barato') ni de venta (está 'caro'). Primero hay que entender por qué está ahí: puede ser liquidez, estructura de amortización, fecha de próximo pago, o alguna característica contractual que el mercado valora diferente. El reflejo correcto es: 'este punto está fuera de curva, ¿por qué?', no asumir directamente la respuesta."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "Un cliente te pregunta: 'Si la curva CER tiene tasas reales del 7-8% en el tramo largo, ¿significa que esos bonos me van a pagar 7-8% por año en pesos?' Redactá una respuesta corta y precisa, sin tecnicismos.",
+          feedback: "La tasa real de un bono CER (el CER+X%) indica cuánto rendís POR ENCIMA de la inflación que vaya ocurriendo, no cuánto pagás en pesos fijo. Si la inflación del año es 30%, un bono CER+7% te da aproximadamente 37% en pesos (ajuste de capital por inflación más la tasa real). Si la inflación es 80%, te da aproximadamente 87%. La tasa real es tu 'ganancia sobre la inflación'; el resultado en pesos depende de cuánta inflación haya. Para el cliente: 'Esos bonos te pagan inflación más un extra; lo que te termina llegando en pesos depende de cuánto suba la inflación, pero siempre vas a ganar ese extra por encima de ella.'"
+        }
+      ]
+    },
+
+    {
+      id: "curva-03",
+      titulo: "Curva de tasa fija — LECAPs y tasa fija soberana",
+      dificultad: "intermedia",
+      consigna: "Observás la curva de instrumentos soberanos en pesos a tasa fija (LECAPs y bonos de tasa fija). El eje X muestra días al vencimiento.",
+      curva: {
+        xLabel: "Días al vencimiento",
+        yLabel: "TEM (%)",
+        xMin: 0, xMax: 420, yMin: 1.4, yMax: 2.1,
+        series: [
+          {
+            nombre: "LECAP / tasa fija soberana", clase: "curve-gd", dotClase: "bond-dot-gd", labelClase: "bond-label-gd",
+            bonos: [
+              { ticker: "S17L6", md: 25, yield: 1.58 },
+              { ticker: "T30J6", md: 30, yield: 1.75 },
+              { ticker: "S31L6", md: 40, yield: 1.80 },
+              { ticker: "S14G6", md: 53, yield: 1.75 },
+              { ticker: "S14G6B", md: 60, yield: 1.80 },
+              { ticker: "S15S6", md: 87, yield: 1.82 },
+              { ticker: "S30S6", md: 138, yield: 1.70 },
+              { ticker: "S30O6", md: 160, yield: 1.68, highlight: true },
+              { ticker: "S30N6", md: 192, yield: 1.77 },
+              { ticker: "T15E7", md: 208, yield: 1.91 },
+              { ticker: "T30A7", md: 303, yield: 1.93 },
+              { ticker: "T31Y7", md: 344, yield: 1.77 },
+              { ticker: "T30J7", md: 374, yield: 1.77 }
+            ]
+          }
+        ]
+      },
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "La S30O6 aparece con TEM 1,68% mientras bonos de plazo similar (S30S6 a 1,70%, S30N6 a 1,77%) rinden más. Un cliente quiere comprar 'la que más rinde'. ¿Qué le señalás sobre la S30O6?",
+          opciones: [
+            "Que es la mejor opción porque tiene el precio más bajo",
+            "Que rinde menos que sus vecinos de plazo similar, lo que puede reflejar mayor liquidez o demanda puntual de ese instrumento; antes de elegir solo por yield hay que mirar también por qué ese punto está por debajo de la curva",
+            "Que hay que comprarla ya porque está 'barata'",
+            "Que la TEM no es comparable entre instrumentos de distintos plazos"
+          ],
+          correcta: 1,
+          feedback: "La S30O6 por debajo de la curva puede significar varias cosas: es muy líquida y el mercado la demanda más, tiene alguna característica particular que el mercado valora, o simplemente es un desfasaje temporal. El punto clave es que 'rinde menos' no significa automáticamente 'mala inversión' — puede significar que el mercado la está comprando más, lo cual sube el precio y baja el yield. El primer paso siempre es preguntarse por qué está donde está, no asumir."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "Un cliente tiene efectivo en pesos que no necesita por 3 meses. Mirando esta curva, ¿qué rango de plazos le sugerirías explorar y por qué? ¿Qué trade-off entre plazo y yield le comunicarías?",
+          feedback: "Para 3 meses (aprox. 90 días), la zona relevante en esta curva es aproximadamente S15S6 (87 días, 1,82%) o S30S6 (138 días, 1,70%). La S15S6 calza mejor con el horizonte del cliente. El trade-off a comunicar: estirar un poco el plazo (por ejemplo a 138 días) no mejora el yield en este caso — de hecho lo empeora levemente — así que no tiene sentido alargar más allá de lo necesario. Si el cliente pudiera estirar a ~200 días, la curva mejora (T15E7 al 1,91%). Siempre comunicar: a tasa fija, si las tasas suben durante el período, el cliente tiene su rendimiento asegurado pero podría haber obtenido más yendo más corto y renovando; si las tasas bajan, habrá asegurado un buen rendimiento."
+        }
+      ]
+    },
+
+    {
+      id: "curva-04",
+      titulo: "Spread ley NY vs ley AR — ¿cuándo conviene pagar ese spread?",
+      dificultad: "avanzada",
+      consigna: "El diferencial entre Globales (GDs) y Bonares (ALs) de duration similar es el 'spread de jurisdicción'. Analizá cuándo tiene sentido para un cliente pagar menos yield para tener ley NY.",
+      curva: {
+        xLabel: "Duration modificada",
+        yLabel: "Yield",
+        xMin: 0.8, xMax: 6.8, yMin: 4.0, yMax: 11.0,
+        series: [
+          {
+            nombre: "Globales (ley NY)", clase: "curve-gd", dotClase: "bond-dot-gd", labelClase: "bond-label-gd",
+            bonos: [
+              { ticker: "GD29", md: 1.38, yield: 4.85 },
+              { ticker: "GD30", md: 1.55, yield: 5.98 },
+              { ticker: "GD35", md: 4.55, yield: 8.49 },
+              { ticker: "GD41", md: 5.60, yield: 8.63 },
+              { ticker: "GD46", md: 6.45, yield: 8.40 }
+            ]
+          },
+          {
+            nombre: "Bonares (ley AR)", clase: "curve-al", dotClase: "bond-dot-al", labelClase: "bond-label-al",
+            bonos: [
+              { ticker: "AL29", md: 1.28, yield: 6.21 },
+              { ticker: "AL30", md: 1.72, yield: 7.18 },
+              { ticker: "AL35", md: 5.10, yield: 9.14 },
+              { ticker: "AL41", md: 5.65, yield: 9.24 }
+            ]
+          }
+        ]
+      },
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "Un cliente institucional quiere bonos soberanos y puede elegir entre GD30 (5,98%) y AL30 (7,18%), ambos con duration similar. El cliente va a mantenerlos 3 años mínimo. ¿Cuál de estos argumentos pesa más para elegir el GD30 a pesar del menor yield?",
+          opciones: [
+            "Que el GD30 tiene mejor precio de pantalla",
+            "Que ante un escenario de estrés de deuda, la ley NY ofrece mayor protección legal al bonista; para un horizonte largo donde ese escenario no es descartable, ese 'seguro' puede valer los 120 bps de yield que se sacrifican",
+            "Que los Globales siempre tienen más liquidez que los Bonares",
+            "No hay ninguna razón válida para elegir un bono que rinde menos"
+          ],
+          correcta: 1,
+          feedback: "El spread ley NY / ley AR es el precio de un 'seguro jurídico'. En horizontes largos, donde la probabilidad acumulada de algún tipo de evento de crédito no es despreciable para Argentina, el acceso a tribunales de Nueva York puede ser materialmente diferente al de un proceso bajo ley local. El cliente que elige GD30 sobre AL30 está pagando 120 bps anuales de menor rendimiento a cambio de esa protección. Si el cliente tiene horizonte corto y alta convicción sobre la estabilidad, puede tener sentido tomar el AL30. Si el horizonte es largo o hay incertidumbre, los GDs tienen una ventaja estructural."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "Un cliente te pregunta: 'Me explicaste que los GDs son más seguros que los ALs, entonces ¿para qué existen los Bonares? ¿Quién los compra?' Redactá una respuesta de 4-5 líneas.",
+          feedback: "Los Bonares existen porque tienen atributos propios que los hacen atractivos para ciertos inversores: rinden más que los Globales de plazo similar, son los soberanos más líquidos del mercado local (especialmente el AL30), y para inversores que ya asumen el riesgo soberano argentino (o que tienen visión de que ese riesgo es bajo en el horizonte de inversión), el extra de yield puede compensar la diferencia de jurisdicción. Los bancos y fondos locales suelen tener Bonares por liquidez; los inversores institucionales internacionales suelen preferir los GDs. No hay un 'mejor' absoluto: depende del horizonte, del perfil de riesgo y de qué tan alta es la convicción sobre la estabilidad del soberano."
+        }
+      ]
+    },
+
+    {
+      id: "curva-05",
+      titulo: "Dollar-linked soberanos — leyendo la curva de devaluación implícita",
+      dificultad: "avanzada",
+      consigna: "Los bonos dollar-linked ajustan por tipo de cambio oficial. Su yield implica cuánta devaluación adicional (o menor) espera el mercado. Interpretá la curva.",
+      curva: {
+        xLabel: "Días al vencimiento",
+        yLabel: "Yield (%)",
+        xMin: 0, xMax: 800, yMin: -5.0, yMax: 12.0,
+        series: [
+          {
+            nombre: "Dollar-linked soberanos", clase: "curve-gd", dotClase: "bond-dot-gd", labelClase: "bond-label-gd",
+            bonos: [
+              { ticker: "TZV26", md: 18, yield: 7.78 },
+              { ticker: "D31L6", md: 49, yield: 2.89 },
+              { ticker: "D30S6", md: 110, yield: 2.95 },
+              { ticker: "D31M7", md: 292, yield: 2.73 },
+              { ticker: "TZV27", md: 383, yield: 2.90 },
+              { ticker: "TZV28", md: 749, yield: 6.82 }
+            ]
+          }
+        ]
+      },
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "El TZV26 (vence en 18 días) tiene yield de 7,78%, mientras los bonos de plazo más largo están en la zona de 2,5-7%. ¿Qué explicación es más razonable para ese yield tan alto en el bono más corto?",
+          opciones: [
+            "Que el mercado espera una devaluación inminente en los próximos 18 días y está exigiendo compensación",
+            "Que es un error de cálculo porque un bono tan corto no debería tener yield",
+            "Que todos los dollar-linked siempre tienen yields muy diferentes entre sí sin razón",
+            "Que el bono vence en dólares y los demás en pesos"
+          ],
+          correcta: 0,
+          feedback: "Exactamente. En bonos de muy corto plazo, pequeños movimientos de precio se amplifican mucho en términos anualizados. Un yield de 7,78% en 18 días puede reflejar que el mercado está priceando algún riesgo de evento puntual (una devaluación o un ajuste del tipo de cambio) en ese ventana corta, o simplemente poca liquidez y spread amplio. Es el tramo que más 'ruido' tiene en la curva y el que menos se puede leer de forma literal sin entender el contexto específico."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "Un cliente quiere cobertura contra devaluación con un horizonte de 12 meses. Mirando esta curva, ¿qué tramo le recomendarías y qué implica un yield de 2,73-2,90% en esos bonos en términos de expectativas del mercado?",
+          feedback: "Para 12 meses, la zona más relevante es D31M7 o TZV27 (yields ~2,73-2,90%). Que el yield sea positivo y en ese rango implica que para que el inversor 'empate' con tener dólares directos, el tipo de cambio oficial tiene que devaluar menos de ~2,73-2,90% anual más de lo que el bono ya descuenta. En términos prácticos: si el mercado espera que el tipo de cambio oficial siga siendo relativamente estable (o con ajustes graduales pequeños), un yield de ~2,80% puede ser razonable; si el cliente espera una devaluación más fuerte que lo que implica ese yield, el bono puede resultar atractivo. Para comunicarle al cliente: 'Este bono ya descuenta que el dólar oficial va a subir un poco; si vos creés que va a subir más de lo que el mercado espera, te conviene; si creés que el tipo de cambio se mantiene estable, tal vez no necesitás esta cobertura en particular.'"
+        }
+      ]
+    }
+  ],
+
+  /* ---- CAJA DE PUNTAS ---- */
+  caja: [
+    {
+      id: "caja-01",
+      titulo: "Activo líquido — spread chico, buena profundidad",
+      dificultad: "básica",
+      consigna: "Un cliente quiere comprar un monto equivalente a ~1.500 nominales de un bono soberano líquido. Mirá el libro de órdenes y decidí cómo ejecutar.",
+      activo: "AL30D — Bonar 30 (ley AR, dólar MEP)",
+      ultimoOperado: 61.18,
+      libro: {
+        bid: [
+          { qty: 1800, px: 61.14 },
+          { qty: 3200, px: 61.10 },
+          { qty: 5000, px: 61.05 },
+          { qty: 8000, px: 61.00 }
+        ],
+        ask: [
+          { qty: 1600, px: 61.22 },
+          { qty: 2800, px: 61.28 },
+          { qty: 4500, px: 61.35 },
+          { qty: 7000, px: 61.40 }
+        ]
+      },
+      contexto: "El cliente tiene disponibilidad hoy y no tiene urgencia de liquidar mañana — puede esperar hasta T+1 si hace falta.",
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "El spread bid/ask es de 0.08 (61.14 / 61.22). Con un monto de ~1.500 nominales, ¿qué tipo de orden recomendás?",
+          opciones: [
+            "Orden a mercado: la liquidez es buena, el spread es chico y el cliente no tiene urgencia de precio exacto",
+            "Orden iceberg: para no mostrar el tamaño total al mercado",
+            "No operar porque el spread es demasiado alto",
+            "Orden stop-loss a 61.10 por si baja"
+          ],
+          correcta: 0,
+          feedback: "Con spread de solo 0.08 sobre un precio de ~61, el spread porcentual es ~0.13% — muy chico para este tipo de activo. El monto de 1.500 nominales es menor que la primera línea del ask (1.600), así que va a ejecutarse completamente en la primera punta sin barrer niveles. En este escenario, una orden a mercado es completamente razonable. La orden iceberg tiene sentido para montos grandes que excedan ampliamente la liquidez visible; acá sería sobreingeniería."
+        },
+        {
+          tipo: "mc",
+          enunciado: "El cliente te pregunta cuánto le va a costar 'de verdad' comprar 1.500 nominales a mercado, considerando el spread. ¿Cómo se lo explicás rápido?",
+          opciones: [
+            "Que el costo del spread es exactamente cero porque el activo es líquido",
+            "Que va a comprar al ask (61.22) en vez del precio medio (61.18), una diferencia de ~0.04 por nominal o ~0.13% del valor; sobre 1.500 nominales eso son aproximadamente 0.6 dólares de costo de spread, más la comisión del broker",
+            "Que el spread no se puede calcular hasta que se ejecute la orden",
+            "Que el costo del spread depende exclusivamente del último operado"
+          ],
+          correcta: 1,
+          feedback: "Cuantificar el costo del spread en términos concretos (no solo en porcentaje) es parte del trabajo del asesor. Acá: spread de 0.08, sobre 1.500 nominales a un precio de ~61 por nominal, el costo de spread es aproximadamente 0.08 × (1.500/100) × 100 = ~1.2 USD de costo implícito de ejecución. Pequeño pero real — y comunicarlo así de concreto construye mucha confianza con el cliente."
+        }
+      ]
+    },
+
+    {
+      id: "caja-02",
+      titulo: "Activo ilíquido — spread grande, decisión de cómo entrar",
+      dificultad: "intermedia",
+      consigna: "Un cliente quiere comprar ~100 nominales de una ON corporativa de baja negociación. El mercado está tranquilo pero hay poca profundidad.",
+      activo: "PNDCD — PAE ON ley NY (dólar MEP)",
+      ultimoOperado: 42.50,
+      libro: {
+        bid: [
+          { qty: 50,  px: 41.80 },
+          { qty: 80,  px: 41.20 },
+          { qty: 120, px: 40.50 },
+          { qty: 200, px: 39.00 }
+        ],
+        ask: [
+          { qty: 40,  px: 43.10 },
+          { qty: 60,  px: 43.90 },
+          { qty: 100, px: 44.50 },
+          { qty: 150, px: 45.00 }
+        ]
+      },
+      contexto: "El cliente tiene convicción en el crédito y puede esperar 1-2 días para ejecutar al mejor precio posible. No tiene urgencia.",
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "El spread es de 1.30 (41.80 bid / 43.10 ask) sobre un precio de ~42.50. El spread porcentual es ~3.1%. Para comprar 100 nominales a mercado, ¿qué problema puntual hay?",
+          opciones: [
+            "Ninguno, el activo es líquido y se puede ejecutar sin problemas",
+            "La primera línea del ask solo tiene 40 nominales; una orden a mercado de 100 va a barrer dos o tres niveles (43.10, 43.90, 44.50) y el precio promedio de ejecución va a ser significativamente peor que el ask de pantalla",
+            "El spread del 3.1% es normal para cualquier bono y no debería preocupar",
+            "Hay que esperar a que el spread baje a cero antes de operar"
+          ],
+          correcta: 1,
+          feedback: "Este es el riesgo de slippage en activos ilíquidos: la primera línea del ask tiene solo 40 nominales. Si el cliente manda 100 a mercado, compra 40 a 43.10, luego 60 a 43.90, con precio promedio de ~(40×43.10 + 60×43.90)/100 = 43.58. Eso es ~0.48 peor que el ask visible. Además, barrer esos niveles puede mover el mercado contra el cliente. Con tiempo disponible, una orden límite cerca de 43.10-43.30 es mucho más prudente."
+        },
+        {
+          tipo: "mc",
+          enunciado: "El cliente puede esperar 1-2 días. ¿Cuál de estas estrategias de ejecución es la más razonable?",
+          opciones: [
+            "Orden a mercado hoy, para asegurar la entrada y no perder la oportunidad",
+            "Orden límite en 43.20 (ligeramente sobre el mejor ask actual), renovar mañana si no ejecuta, y comunicarle al cliente que puede no ejecutarse el mismo día",
+            "No hacer nada y esperar que el bono baje solo hasta 40",
+            "Orden iceberg de 100 nominales mostrando de a 10"
+          ],
+          correcta: 1,
+          feedback: "Con spread grande, poca profundidad y cliente sin urgencia, una orden límite bien posicionada (cerca del mejor ask, no lejos del mercado) es la respuesta correcta. El cliente sacrifica la certeza de ejecución inmediata a cambio de un precio mucho más razonable. La comunicación previa es clave: avisarle que 'puede no ejecutarse hoy' evita que llame nervioso a las 4pm preguntando por qué no compró. La orden iceberg acá no aporta — el volumen es demasiado chico para que esconder el tamaño sea relevante."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "El cliente te pregunta: '¿Por qué el último operado era 42.50 y me decís que tengo que pagar 43.10 o más?' Redactá una respuesta corta (3-4 líneas) sin jerga.",
+          feedback: "El último operado te dice dónde se cruzó el mercado la última vez que alguien compró y alguien vendió de acuerdo, pero en este momento no hay nadie dispuesto a vender a ese precio. Los vendedores de hoy están pidiendo desde 43.10 para arriba. Si querés comprar ahora, tenés que aceptar el precio que ellos piden, no el del último negocio. Es como ver que ayer un auto usado se vendió en $10.000 pero hoy el dueño pide $10.500 — el precio de ayer fue real, pero no te garantiza que vayas a poder comprar hoy a ese valor."
+        }
+      ]
+    },
+
+    {
+      id: "caja-03",
+      titulo: "Orden grande en activo de liquidez media",
+      dificultad: "avanzada",
+      consigna: "Un cliente quiere comprar 5.000 nominales de GD30 (volumen significativo para una sola operación). Analizá el impacto de mercado antes de ejecutar.",
+      activo: "GD30D — Global 30 (ley NY, dólar MEP)",
+      ultimoOperado: 62.98,
+      libro: {
+        bid: [
+          { qty: 3000, px: 62.92 },
+          { qty: 5000, px: 62.85 },
+          { qty: 8000, px: 62.78 },
+          { qty: 12000, px: 62.70 }
+        ],
+        ask: [
+          { qty: 2000, px: 63.05 },
+          { qty: 3500, px: 63.12 },
+          { qty: 6000, px: 63.20 },
+          { qty: 10000, px: 63.30 }
+        ]
+      },
+      contexto: "El cliente tiene urgencia moderada: quiere estar comprado antes del fin de la semana (quedan 2 días hábiles) pero no necesariamente hoy.",
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "Si el cliente manda 5.000 a mercado ahora, ¿cuál sería el precio promedio aproximado de ejecución?",
+          opciones: [
+            "63.05, el precio del mejor ask",
+            "Aproximadamente 63.10: compra 2.000 a 63.05 + 3.000 a 63.12, promedio ~(2.000×63.05+3.000×63.12)/5.000 ≈ 63.09",
+            "62.98, el último operado",
+            "63.30, el precio más alto del ask visible"
+          ],
+          correcta: 1,
+          feedback: "El cálculo correcto: 2.000 nominales a 63.05 + 3.000 nominales a 63.12. Precio promedio: (2.000 × 63.05 + 3.000 × 63.12) / 5.000 = (126.100 + 189.360) / 5.000 = 63.092. O sea, paga en promedio ~0.04 más que el mejor ask de pantalla. En este caso el impacto es bajo (GD30 tiene buena liquidez), pero en activos menos líquidos ese barrer de niveles puede ser mucho más costoso. El ejercicio entrena calcular el precio promedio real antes de ejecutar."
+        },
+        {
+          tipo: "mc",
+          enunciado: "Con 2 días de plazo y un impacto de mercado bajo (spread ~0.13%), ¿qué estrategia elegís?",
+          opciones: [
+            "Dividir la compra en dos tramos de 2.500: uno hoy a mercado y otro mañana con orden límite, para promediar precio",
+            "Esperar a que el ask baje a 62.98 antes de comprar",
+            "Comprar todo a mercado hoy: el impacto es bajo y el cliente tiene tiempo limitado",
+            "Usar una orden iceberg de 5.000 mostrando de a 500"
+          ],
+          correcta: 0,
+          feedback: "Con spread chico y buena liquidez, ambas estrategias (todo a mercado o dividido en tramos) son razonables. La división en tramos tiene sentido cuando hay incertidumbre de precio a corto plazo y el cliente tiene tiempo — promedia el costo de ejecución y reduce el riesgo de comprar todo en un momento inoportuno. Comprar todo hoy también es válido dado que el impacto es bajo. Lo importante es poder justificar la elección al cliente en función del trade-off tiempo/precio, no elegir al azar."
+        }
+      ]
+    },
+
+    {
+      id: "caja-04",
+      titulo: "Libro con desequilibrio — presión vendedora",
+      dificultad: "intermedia",
+      consigna: "El libro muestra mucho más volumen del lado vendedor que comprador. Un cliente quiere vender 800 nominales de una acción. ¿Qué le señalás?",
+      activo: "GGAL — Grupo Galicia (pesos, rueda T+1)",
+      ultimoOperado: 8850,
+      libro: {
+        bid: [
+          { qty: 200, px: 8820 },
+          { qty: 350, px: 8800 },
+          { qty: 500, px: 8770 },
+          { qty: 800, px: 8740 }
+        ],
+        ask: [
+          { qty: 1200, px: 8870 },
+          { qty: 2500, px: 8900 },
+          { qty: 4000, px: 8930 },
+          { qty: 6000, px: 8960 }
+        ]
+      },
+      contexto: "Es una rueda de toma de ganancias generalizada después de una semana muy alcista para los bancos. El cliente quiere vender para realizar parte de las ganancias acumuladas.",
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "El volumen del lado vendedor (ask) es mucho mayor que el comprador (bid). Para vender 800 nominales, ¿qué riesgo específico tiene mandar una orden a mercado?",
+          opciones: [
+            "Ninguno, el activo es una acción líquida y el spread es pequeño",
+            "Que el bid disponible es insuficiente para absorber 800: la primera línea tiene solo 200, la segunda 350. La orden barrearía al menos las primeras dos líneas (8.820 y 8.800) y parte de la tercera, con precio promedio significativamente por debajo del bid visible",
+            "Que la orden puede no ejecutarse porque el mercado está cerrando",
+            "Que las ventas no se pueden hacer a mercado en acciones argentinas"
+          ],
+          correcta: 1,
+          feedback: "Para vender 800: 200 a 8.820 + 350 a 8.800 + 250 a 8.770 = precio promedio ≈ 8.798. Eso es ~52 pesos menos que el primer bid de pantalla, un slippage de ~0.6%. En una rueda de presión vendedora, ese costo puede empeorar aún más si el mercado sigue cayendo mientras se ejecuta la orden. La recomendación: orden límite en 8.820 o incluso 8.800, aunque no ejecute todo de una vez."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "El cliente te dice 'vendé todo ahora, no quiero esperar'. Redactá cómo le explicás el riesgo de ejecutar 800 nominales a mercado en este libro, y qué alternativa le proponés sin negarle la venta.",
+          feedback: "La respuesta debe: (1) no bloquear la decisión del cliente sino informarla: 'podés vender ya, solo quiero que sepas lo que puede pasar'; (2) cuantificar el riesgo concreto: 'si mandamos todo a mercado ahora, probablemente ejecutemos a un promedio de ~8.798 en vez de 8.820 del mejor bid, eso son ~22 pesos menos por acción o ~17.600 pesos en total sobre 800 acciones'; (3) proponer alternativa: 'si querés reducir ese costo, puedo poner una orden límite a 8.810 y en 5-10 minutos probablemente se complete; si no te importa el deslizamiento, mandamos todo a mercado ya'; (4) respetar la decisión final: si el cliente elige velocidad sobre precio, ejecutar sin hacer drama."
+        }
+      ]
+    },
+
+    {
+      id: "caja-05",
+      titulo: "Spread en términos de TIR — ON corporativa",
+      dificultad: "avanzada",
+      consigna: "Cuando operás renta fija, el spread bid/ask no solo importa en precio sino en términos de TIR: cuántos puntos básicos separan el rendimiento según el precio al que comprás o vendés.",
+      activo: "YMC1C — YPF ON 2029 (ley NY, cable USD)",
+      ultimoOperado: 96.90,
+      libro: {
+        bid: [
+          { qty: 100, px: 96.50, tir: 7.22 },
+          { qty: 200, px: 96.20, tir: 7.29 },
+          { qty: 300, px: 95.80, tir: 7.38 },
+          { qty: 500, px: 95.00, tir: 7.52 }
+        ],
+        ask: [
+          { qty: 80,  px: 97.20, tir: 7.08 },
+          { qty: 150, px: 97.50, tir: 7.02 },
+          { qty: 250, px: 98.00, tir: 6.93 },
+          { qty: 400, px: 98.50, tir: 6.84 }
+        ]
+      },
+      contexto: "Un cliente que sigue el mercado de ONs pregunta si conviene entrar al YMC1C hoy o esperar. Duration modificada del bono: ~2.56.",
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "El spread en precio es de 0.70 (96.50 bid / 97.20 ask). En términos de TIR, el spread es de 14 bps (7.08% ask / 7.22% bid). ¿Por qué mirar el spread en TIR puede ser más útil que solo mirarlo en precio para tomar una decisión?",
+          opciones: [
+            "Porque el spread en TIR siempre es más chico y hace ver el activo más barato",
+            "Porque la TIR permite comparar el costo de ejecución con el rendimiento esperado de la idea: si ganás 50 bps sobre alternativas similares pero el spread de entrada te cuesta 14 bps, tu ventaja real es ~36 bps — eso es más informativo que saber que el spread en precio es 0.70",
+            "Porque el precio en renta fija no tiene ninguna utilidad analítica",
+            "Porque la TIR del bid siempre es la TIR real que va a cobrar el inversor"
+          ],
+          correcta: 1,
+          feedback: "El spread en TIR contextualiza el costo de entrada. Si tu tesis es que este bono vale ~7.15% de yield y el ask está en 7.08%, el 'error de entrada' es solo 7 bps — muy razonable. Si el ask estuviera en 6.80%, pagarías 35 bps de más sobre tu valuación, lo que requeriría más convicción para entrar. Mirar el spread en TIR también te da una referencia: un spread de 14 bps en un bono con duration 2.56 equivale aproximadamente a 14 × 2.56 / 100 ≈ 0.36% de precio — eso es lo que 'perdés' de entrada y desde lo que empezás tu carry."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "El cliente pregunta: '¿Me conviene entrar ya o espero que baje un poco más?' Usando los datos de la caja y la duration del bono, armá un argumento de 4-5 líneas para ayudarlo a decidir (no hay una respuesta única correcta — lo importante es el razonamiento).",
+          feedback: "Una buena respuesta debe incluir: (1) la TIR actual de entrada al ask (7.08%) vs alguna referencia de valor (por ejemplo, comparables corporativos o el nivel histórico de ese bono); (2) el costo de 'esperar': si bajás 1 punto de precio (a ~96.20), tu TIR de entrada sería ~7.29% — mejor, pero implica que el activo tiene que caer. Si el mercado no cae, te perdés el carry mientras esperás; (3) el costo de 'entrar ya': pagás el spread de 14 bps de TIR, pero empezás a acumular carry de inmediato; (4) la conclusión depende del horizonte y la convicción: si el cliente tiene convicción y horizonte, entrar con orden límite cerca del ask (97.20-97.50) es razonable; si quiere optimizar precio, orden límite más agresiva con riesgo de no ejecutar."
+        }
+      ]
+    }
+  ],
+
+  /* ---- ROTACIÓN ---- */
+  rotacion: [
+    {
+      id: "rot-01",
+      titulo: "AL30 vs GD30 — ¿vale el spread de ley?",
+      dificultad: "intermedia",
+      consigna: "Un cliente tiene AL30 en cartera y analiza rotar al GD30. Ambos son soberanos en dólares de duration similar. Evaluá si la rotación tiene sentido.",
+      contexto: "El riesgo país acaba de comprimir 80 bps en la semana tras una mejora de rating de S&P (CCC+ → B-). El mercado espera que Moody's también mejore en los próximos meses. El cliente tiene horizonte de 2 años.",
+      instrumentos: [
+        {
+          nombre: "AL30 (Bonar 30)",
+          tag: "Posición actual",
+          datos: [
+            { label: "Yield", valor: "7.18%", clase: "" },
+            { label: "Duration modificada", valor: "1.72", clase: "" },
+            { label: "Ley", valor: "Argentina", clase: "atencion" },
+            { label: "Liquidez", valor: "Muy alta (mayor volumen del mercado)", clase: "bueno" },
+            { label: "Paridad", valor: "61.14", clase: "" }
+          ]
+        },
+        {
+          nombre: "GD30 (Global 30)",
+          tag: "Bono destino",
+          datos: [
+            { label: "Yield", valor: "5.98%", clase: "" },
+            { label: "Duration modificada", valor: "1.55", clase: "" },
+            { label: "Ley", valor: "Nueva York", clase: "bueno" },
+            { label: "Liquidez", valor: "Alta", clase: "bueno" },
+            { label: "Paridad", valor: "62.93", clase: "" }
+          ]
+        }
+      ],
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "El cliente argumenta: 'Con el riesgo país cayendo y la mejora de rating, el GD30 va a subir más que el AL30 porque tiene mejor ley.' ¿Es correcto ese razonamiento?",
+          opciones: [
+            "Sí, siempre que el riesgo país baja los GDs suben más que los ALs sin excepción",
+            "Parcialmente: en compresiones de riesgo país fuertes, ambos se benefician, pero los GDs suelen comprimir algo más porque el spread de ley se estrecha cuando el mercado percibe menor riesgo sistémico. Sin embargo, la diferencia de duration es pequeña acá, y el AL30 tiene más yield de carry. No es una regla automática",
+            "No, los ALs siempre suben más que los GDs en contextos de mejora de rating",
+            "La ley no tiene ningún efecto sobre cómo responden los precios a cambios de riesgo país"
+          ],
+          correcta: 1,
+          feedback: "El razonamiento del cliente tiene parte de verdad pero está simplificado. En compresiones fuertes de riesgo país, el spread ley NY/ley AR tiende a achicarse — el mercado percibe que la diferencia de protección jurídica importa menos cuando el riesgo de evento crediticio baja. Eso beneficia relativamente más a los GDs. Pero la diferencia de duration entre AL30 (1.72) y GD30 (1.55) es pequeña, así que el efecto no es enorme. Además, el AL30 te paga 120 bps más de carry mientras tanto. La decisión no es obvia."
+        },
+        {
+          tipo: "mc",
+          enunciado: "¿Cuál es el costo explícito de rotar del AL30 al GD30 en términos de yield anual?",
+          opciones: [
+            "No hay ningún costo, el yield no cambia al rotar",
+            "~120 bps menos de yield anual (de 7.18% a 5.98%), que a lo largo de 2 años de horizonte son ~240 bps de carry resignado a cambio de la protección jurídica del GD30",
+            "El costo es exactamente la diferencia de precio entre ambos bonos",
+            "Es imposible calcularlo sin conocer el precio exacto de cada operación"
+          ],
+          correcta: 1,
+          feedback: "El costo de rotación se mide primero en yield: 7.18% - 5.98% = 1.20% por año de carry que el cliente resigna. En 2 años de horizonte, eso acumula ~2.40% de carry no cobrado (sin componer). A cambio, obtiene la protección jurídica del GD30. La pregunta de valuación es: ¿esos 240 bps de carry resignado valen la protección de ley NY en un horizonte de 2 años, con el riesgo país en mínimos de la gestión? No hay respuesta única — depende del perfil y la convicción del cliente sobre la sostenibilidad macro."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "Redactá en 4-5 líneas tu recomendación final sobre si hacer o no esta rotación, incluyendo el argumento principal a favor y el principal en contra.",
+          feedback: "Argumento a favor de rotar al GD30: en un contexto de compresión de riesgo país y posible nueva mejora de Moody's, el spread ley puede seguir cerrándose, lo que beneficiaría relativamente más al GD30. Además, para un cliente con horizonte largo, la protección jurídica tiene valor genuino. Argumento en contra: se resignan ~120 bps de yield por año (carry), la duration del AL30 es ligeramente mayor (mejor posicionado si hay más compresión de spread), y la liquidez del AL30 es superior. Conclusión razonable: si el cliente ya tiene suficiente exposición a Bonares y quiere diversificar jurisdicción, la rotación parcial tiene sentido; si el objetivo es maximizar carry en el corto plazo, mantenerse en AL30 es más razonable."
+        }
+      ]
+    },
+
+    {
+      id: "rot-02",
+      titulo: "Bono CER vs tasa fija LECAP — ¿qué descuenta el mercado de inflación?",
+      dificultad: "avanzada",
+      consigna: "Un cliente tiene LECAPs a tasa fija y evalúa rotar a bonos CER. El dato de inflación de mayo salió en 2.1% mensual, mejor al consenso de 2.3%. Las breakevens de inflación implícitas en la curva para agosto–septiembre son de 1.5% mensual.",
+      contexto: "El mercado está descontando que la desinflación continúa. El cliente no sabe si creerle al dato o si es estacional. Horizonte: 6 meses.",
+      instrumentos: [
+        {
+          nombre: "LECAP S30S6",
+          tag: "Posición actual",
+          datos: [
+            { label: "TEM (tasa efectiva mensual)", valor: "1.70%", clase: "" },
+            { label: "TEA aproximada", valor: "22.1%", clase: "" },
+            { label: "Días al vencimiento", valor: "138 días", clase: "" },
+            { label: "Tipo de instrumento", valor: "Tasa fija en pesos", clase: "" },
+            { label: "Riesgo", valor: "Tasa: fija, sin sorpresa. Inflación: no cubierta", clase: "atencion" }
+          ]
+        },
+        {
+          nombre: "TZXD7 (CER dic-27)",
+          tag: "Bono destino",
+          datos: [
+            { label: "Tasa real (CER+)", valor: "5.16%", clase: "bueno" },
+            { label: "Duration modificada", valor: "1.38", clase: "" },
+            { label: "Tipo de instrumento", valor: "Ajustable por CER (inflación)", clase: "" },
+            { label: "Breakeven de inflación implícita", valor: "~1.5% mensual desde agosto", clase: "" },
+            { label: "Riesgo", valor: "Si inflación < 1.5% mensual, la LECAP gana", clase: "atencion" }
+          ]
+        }
+      ],
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "Si la inflación mensual promedia exactamente 1.5% para los próximos meses (lo que el mercado ya descuenta), ¿qué instrumento le conviene al cliente?",
+          opciones: [
+            "El CER, porque siempre gana contra la tasa fija",
+            "Son aproximadamente equivalentes: el breakeven es justamente el nivel de inflación donde ambos instrumentos rinden igual; si la inflación es exactamente 1.5% mensual, el cliente no gana ni pierde por la elección",
+            "La LECAP, porque la tasa fija siempre es mejor que el CER cuando la inflación baja",
+            "Imposible saberlo sin más datos"
+          ],
+          correcta: 1,
+          feedback: "El concepto de breakeven de inflación es central en este análisis: es la tasa de inflación mensual que hace que ambos instrumentos rindan lo mismo. Si la inflación real resulta mayor al breakeven, el CER gana; si resulta menor, la LECAP gana. Que el breakeven esté en 1.5% cuando la inflación actual es 2.1% (mayo) sugiere que el mercado ya descuenta una caída significativa en la inflación futura. El cliente que cree que la inflación va a seguir siendo más alta que ese 1.5% debería preferir el CER; el que cree que la desinflación va a continuar o acelerarse, la LECAP."
+        },
+        {
+          tipo: "mc",
+          enunciado: "El cliente dice que no sabe si el dato de inflación de mayo (2.1%) fue real o estacional. ¿Qué herramienta del análisis macro le ofrecés para matizar esa lectura?",
+          opciones: [
+            "Ignorar la inflación mensual y mirar solo la anual",
+            "Distinguir entre inflación general e inflación núcleo: si la general bajó más que la núcleo, parte de la baja puede ser estacional (por ejemplo, alimentos frescos); la núcleo da una lectura más representativa de la tendencia de fondo",
+            "Usar solo el dato del Banco Central, ignorar el INDEC",
+            "La inflación mensual no es útil para tomar decisiones de cartera"
+          ],
+          correcta: 1,
+          feedback: "Exactamente: el split general/núcleo es una herramienta concreta. Si el dato de 2.1% se explica en parte por caídas estacionales en alimentos frescos (que suelen tener mayor volatilidad), la núcleo puede estar mostrando una tendencia más persistente de 2.5-2.8%, lo que cambiaría el análisis del breakeven. Para el cliente: 'El dato de mayo fue bueno, pero conviene esperar junio para confirmar si la tendencia de fondo realmente bajó o si fue un mes particular.'"
+        },
+        {
+          tipo: "abierta",
+          enunciado: "Con toda la información disponible, ¿hacés la rotación de LECAP a CER o te quedás? Escribí tu razonamiento en 4-5 líneas, incluyendo qué información adicional pedirías antes de decidir.",
+          feedback: "Una buena respuesta debería incluir: (1) que el breakeven de 1.5% ya descuenta bastante desinflación, así que el CER solo gana si la inflación resulta mayor a ese nivel; (2) que el dato de mayo fue positivo pero puede tener componente estacional — conviene ver junio antes de rotar masivamente; (3) que si el cliente tiene convicción de que la inflación va a seguir siendo +2% mensual, una rotación parcial al CER tiene sentido como cobertura; (4) que la rotación total no parece justificada en este contexto de desinflación ya priceada en el mercado. Información adicional útil: inflación núcleo de mayo (para separar tendencia de estacionalidad) y el dato de expectativas del REM (Relevamiento de Expectativas de Mercado) para los próximos 3 meses."
+        }
+      ]
+    },
+
+    {
+      id: "rot-03",
+      titulo: "ON corporativa vs soberano — ¿el spread compensa el riesgo?",
+      dificultad: "intermedia",
+      consigna: "Un cliente tiene GD30 (soberano, 5.98%) y está mirando una ON corporativa de una empresa exportadora argentina con yield más alto. Evaluá si el spread corporativo tiene sentido.",
+      contexto: "El contexto macroeconómico es favorable para exportadoras: dólar agro estabilizado, precio del crudo en niveles moderados. La empresa tiene deuda/EBITDA de 2.1x.",
+      instrumentos: [
+        {
+          nombre: "GD30 (Global 30)",
+          tag: "Posición actual",
+          datos: [
+            { label: "Yield", valor: "5.98%", clase: "" },
+            { label: "Duration modificada", valor: "1.55", clase: "" },
+            { label: "Emisor", valor: "Soberano argentino", clase: "" },
+            { label: "Ley", valor: "Nueva York", clase: "bueno" },
+            { label: "Liquidez", valor: "Muy alta", clase: "bueno" }
+          ]
+        },
+        {
+          nombre: "MGCND (Pampa Energía ON 2028)",
+          tag: "Bono destino",
+          datos: [
+            { label: "Yield", valor: "4.70%", clase: "" },
+            { label: "Duration modificada", valor: "1.07", clase: "" },
+            { label: "Emisor", valor: "Pampa Energía — exportadora de gas/electricidad", clase: "" },
+            { label: "Deuda neta / EBITDA", valor: "2.1x (nivel moderado)", clase: "bueno" },
+            { label: "Liquidez", valor: "Media", clase: "atencion" }
+          ]
+        }
+      ],
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "El MGCND rinde MENOS que el GD30 soberano (4.70% vs 5.98%). ¿Cómo se explica que una ON corporativa rinda menos que el bono soberano del mismo país?",
+          opciones: [
+            "Es imposible, una ON corporativa siempre debe rendir más que el soberano del mismo país",
+            "El mercado puede percibir que Pampa Energía (exportadora con ingresos en dólares y baja deuda) tiene menor riesgo de no pago que el propio Estado argentino; el crédito corporativo exportador puede ser visto como más sólido que el soberano en ciertos contextos",
+            "Significa que el GD30 está sobrevaluado y hay que venderlo",
+            "Es un error de pantalla que se va a corregir"
+          ],
+          correcta: 1,
+          feedback: "Esto ocurre en Argentina y es un fenómeno real que cuesta explicar en el mundo desarrollado. Cuando el soberano tiene problemas de acceso al crédito pero las empresas exportadoras generan dólares propios y tienen finanzas sólidas, el mercado puede poner un riesgo crediticio menor a ciertas corporaciones que al propio Estado. No es una anomalía — es una lectura racional de dos fuentes de repago muy distintas: el Estado depende de recaudación impositiva y acceso a mercados; Pampa depende de vender gas a precios de mercado."
+        },
+        {
+          tipo: "mc",
+          enunciado: "Desde la perspectiva de un cliente conservador, ¿cuál es el argumento más importante en contra de rotar del GD30 al MGCND?",
+          opciones: [
+            "Que el MGCND rinde menos, lo que lo hace inferior en todo sentido",
+            "Que la ON corporativa tiene mucha menos liquidez que el GD30: si el cliente necesita salir antes del vencimiento, puede enfrentar un spread grande y dificultad para ejecutar sin impacto de precio",
+            "Que las ONs corporativas no están reguladas por ningún organismo",
+            "Que Pampa Energía no paga dividendos"
+          ],
+          correcta: 1,
+          feedback: "Para un cliente conservador, la liquidez es un atributo fundamental. El GD30 es el bono soberano con mayor volumen de negociación del mercado local; en cualquier escenario, el cliente puede salir con facilidad. La ON de Pampa tiene liquidez media: el bid/ask spread puede ser amplio en momentos de stress, y vender antes del vencimiento puede costar más de lo esperado. Si el cliente puede mantener hasta el vencimiento, ese riesgo es menor; si necesita liquidez potencial, el GD30 es claramente superior en ese atributo."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "El cliente te pregunta: '¿Para qué me sirve ganar menos yield con el corporativo?' Redactá en 4-5 líneas los argumentos a favor del MGCND para un cliente con horizonte hasta vencimiento (2028) y sin necesidad de liquidez.",
+          feedback: "Argumentos válidos para el MGCND con ese perfil: (1) duration menor (1.07 vs 1.55) — el MGCND es menos sensible a cambios de spread soberano, lo que reduce la volatilidad de precio en el camino; (2) el riesgo de crédito percibido puede ser menor que el soberano para algunos inversores (empresa exportadora con fundamentos propios, menos expuesta al riesgo fiscal del Estado); (3) menor yield no significa peor inversión en términos ajustados por riesgo — si el riesgo real de no pago es menor, el rendimiento ajustado puede ser superior; (4) para diversificar la cartera de crédito: tener solo soberano y sumar un corporativo exportador reduce la concentración en un solo emisor. La clave es comunicar que la comparación no es solo '4.70% vs 5.98%' sino '¿qué riesgo estoy cobrando en cada caso?'"
+        }
+      ]
+    },
+
+    {
+      id: "rot-04",
+      titulo: "Acortar duration en contexto de baja de tasas esperada — ¿tiene sentido?",
+      dificultad: "avanzada",
+      consigna: "Un cliente tiene bonos CER de duration larga. El mercado espera que la inflación siga bajando (breakeven en 1.5% mensual para el segundo semestre). Un colega le sugirió 'acortar duration porque si la inflación baja, los bonos largos sufren'. Evaluá si esa recomendación tiene sentido.",
+      contexto: "Riesgo país en mínimos de la gestión (~580 bps). Dato de inflación de mayo: 2.1% (mejor al esperado). Merval en USD rompió USD 2.200 tras la mejora de rating de S&P.",
+      instrumentos: [
+        {
+          nombre: "TX28 (bono CER, duration ~1.55)",
+          tag: "Tramo corto",
+          datos: [
+            { label: "Tasa real (CER+)", valor: "3.98%", clase: "" },
+            { label: "Duration modificada", valor: "1.55", clase: "" },
+            { label: "Sensibilidad a tasas reales", valor: "Menor", clase: "bueno" },
+            { label: "Si inflación cae 50 bps más de lo esperado", valor: "Impacto de precio: moderado", clase: "" }
+          ]
+        },
+        {
+          nombre: "DICP (bono CER, duration ~3.15)",
+          tag: "Tramo largo",
+          datos: [
+            { label: "Tasa real (CER+)", valor: "7.95%", clase: "bueno" },
+            { label: "Duration modificada", valor: "3.15", clase: "" },
+            { label: "Sensibilidad a tasas reales", valor: "Mayor", clase: "atencion" },
+            { label: "Si inflación cae 50 bps más de lo esperado", valor: "Impacto de precio: mayor", clase: "atencion" }
+          ]
+        }
+      ],
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "El colega dice que 'si la inflación baja, los bonos CER largos sufren'. ¿Ese razonamiento es correcto?",
+          opciones: [
+            "Sí, completamente: si la inflación baja, los bonos CER siempre pierden valor sin excepción",
+            "Parcialmente correcto: lo que importa no es si la inflación baja en absoluto, sino si baja más de lo que el mercado ya está descontando en el precio del bono; si el mercado ya priceó una inflación de 1.5% y la inflación real resulta exactamente 1.5%, no hay sorpresa y el bono no sufre por eso",
+            "No, los bonos CER largos nunca pierden valor aunque baje la inflación",
+            "La inflación no afecta el precio de los bonos CER"
+          ],
+          correcta: 1,
+          feedback: "Este es un punto sutil pero muy importante: en mercados de renta fija, lo que mueve los precios no es el dato, sino la sorpresa respecto al dato ya descontado. Si el DICP ya tiene priceada una inflación de 1.5% mensual y la inflación resulta exactamente 1.5%, no hay movimiento de precio por ese factor. Si resulta 1.8% (mayor a lo priceado), el DICP sube; si resulta 1.0% (menor), baja. El consejo del colega confunde 'inflación baja en absoluto' con 'inflación baja más de lo esperado', que son situaciones completamente distintas."
+        },
+        {
+          tipo: "mc",
+          enunciado: "Si el cliente cree que la inflación va a resultar igual o mayor a lo que el mercado descuenta (1.5% mensual), ¿le conviene acortar duration o mantener el DICP?",
+          opciones: [
+            "Acortar siempre, sin importar la visión de inflación",
+            "Mantener el DICP: si la inflación resulta en línea o mayor al breakeven, el bono largo obtiene más carry ajustado (CER+7.95% vs CER+3.98%) y no hay sorpresa negativa de inflación que lo perjudique",
+            "Vender todo y comprar dólares",
+            "No importa, ambos instrumentos van a rendir exactamente lo mismo"
+          ],
+          correcta: 1,
+          feedback: "Si la visión del cliente es que la inflación va a estar en línea o por encima del breakeven de 1.5%, el DICP ofrece casi 400 bps más de tasa real que el TX28 (7.95% vs 3.98%), sin la penalidad de precio que temía el colega. Acortar duration solo tiene sentido si el cliente cree que la inflación va a resultar materialmente menor a lo que el mercado ya descuenta. El error del colega fue aconsejar sin preguntar cuál era la visión de inflación del cliente."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "Si tuvieras que explicarle al cliente (sin el colega presente) la diferencia entre 'inflación baja' y 'inflación baja más de lo esperado', ¿cómo lo harías en 4-5 líneas con una analogía simple?",
+          feedback: "Una buena analogía: 'Imaginá que vos ya sabés que mañana va a llover, y salís con paraguas. Si efectivamente llueve, no cambia nada en tu día — ya estabas preparado. El paraguas era el precio del mercado. Lo que te desorganizaría el día es que lloviera el doble de lo esperado (el mercado sufrió la sorpresa) o que no lloviera nada (el mercado se fue al lado opuesto de lo descontado). Con los bonos CER pasa lo mismo: el mercado ya 'salió con paraguas' para una inflación del 1.5%. Si resulta exactamente eso, no pasa nada. El problema es si llueve mucho menos de lo esperado.'"
+        }
+      ]
+    },
+
+    {
+      id: "rot-05",
+      titulo: "CEDEARs — ¿rotación sectorial o salida completa?",
+      dificultad: "intermedia",
+      consigna: "Un cliente tiene CEDEARs del sector energético (ILF, ETF latinoamericano con sesgo en energía). La caída del precio del crudo de USD 90 a USD 76 impactó en el sector. Evalúa si conviene salir del ETF o rotar a un sector con menor exposición al petróleo.",
+      contexto: "Argentina tuvo su mejor semana del año en renta variable (Merval +7% en USD). El sector bancario fue el gran ganador (BBAR, SUPV, GGAL +11-14%). El sector energético quedó como rezagado pese al buen clima general. El crudo sigue presionado.",
+      instrumentos: [
+        {
+          nombre: "ILF (ETF Latinoamérica)",
+          tag: "Posición actual",
+          datos: [
+            { label: "Exposición principal", valor: "Brasil + México (energía y materiales)", clase: "" },
+            { label: "Sensibilidad al crudo", valor: "Alta — el sector energético pesa mucho", clase: "atencion" },
+            { label: "Rendimiento semanal", valor: "+0.32% (rezagado vs mercado general)", clase: "atencion" },
+            { label: "Diversificación", valor: "Latam: 40 empresas de la región", clase: "bueno" },
+            { label: "Costo operativo (TER)", valor: "~0.47% anual", clase: "" }
+          ]
+        },
+        {
+          nombre: "BBAR (Banco BBVA Argentina — CEDEAR)",
+          tag: "Alternativa sectorial",
+          datos: [
+            { label: "Sector", valor: "Bancario argentino", clase: "" },
+            { label: "Sensibilidad al crudo", valor: "Baja — no correlacionado con petróleo", clase: "bueno" },
+            { label: "Rendimiento semanal", valor: "+13.90% (gran ganador de la semana)", clase: "bueno" },
+            { label: "Riesgo idiosincrático", valor: "Alto — concentrado en un solo banco/país", clase: "atencion" },
+            { label: "Driver principal", valor: "Riesgo país Argentina / spread soberano", clase: "" }
+          ]
+        }
+      ],
+      preguntas: [
+        {
+          tipo: "mc",
+          enunciado: "El cliente razona: 'Los bancos subieron 14% esta semana y el ILF solo subió 0.3%, conviene rotar todo al BBAR.' ¿Qué error de razonamiento hay en esa conclusión?",
+          opciones: [
+            "Ninguno, si el BBAR subió más la semana pasada va a seguir haciéndolo",
+            "Está extrapolando el rendimiento pasado reciente como si fuera una garantía de desempeño futuro, y además está comparando un ETF diversificado (40 empresas, 4 países) con una acción individual concentrada en un solo banco de un solo país emergente",
+            "El ILF y el BBAR son exactamente el mismo tipo de instrumento, no hay diferencia",
+            "Los bancos nunca pueden seguir subiendo después de una semana alcista"
+          ],
+          correcta: 1,
+          feedback: "Hay dos errores en el razonamiento: (1) sesgo de rendimiento reciente — lo que subió esta semana no tiene por qué seguir subiendo; de hecho, el BBAR subió tanto justamente porque estaba rezagado y hay un 'catch-up' con la mejora de riesgo país; ese movimiento ya ocurrió en parte; (2) cambio de perfil de riesgo sin conciencia: el ILF diversifica entre 40 empresas y 4 países; el BBAR concentra todo en un solo banco argentino. El riesgo específico del BBAR (regulatorio, macroeconómico local, de crédito sectorial) es mucho mayor que el del ILF."
+        },
+        {
+          tipo: "mc",
+          enunciado: "El verdadero problema del cliente con ILF es la exposición al crudo. ¿Cuál sería una alternativa más quirúrgica que vender todo y concentrarse en BBAR?",
+          opciones: [
+            "No hay ninguna alternativa — o se tiene ILF o se tiene BBAR",
+            "Reducir parcialmente el ILF y diversificar con un CEDEAR de banco latinoamericano o un ETF de otro sector (por ejemplo, tecnología o consumo), en vez de concentrar todo en un solo banco argentino",
+            "Esperar que el crudo vuelva a USD 90 antes de tomar cualquier decisión",
+            "Convertir los CEDEARs en dólares billete"
+          ],
+          correcta: 1,
+          feedback: "El problema específico es la exposición al crudo, no necesariamente al ILF como instrumento. Una solución quirúrgica puede ser reducir parcialmente el ILF y agregar exposición a sectores con menor correlación al petróleo (tecnología, consumo, bancos), sin concentrarse en un solo activo argentino. Rotarlo todo al BBAR resuelve el problema del crudo pero crea uno nuevo: concentración extrema en un solo banco de un mercado emergente volátil. El principio de diversificación no desaparece porque una semana un activo haya sido el gran ganador."
+        },
+        {
+          tipo: "abierta",
+          enunciado: "El cliente tiene perfil moderado y horizonte de 18 meses. ¿Qué le recomendarías puntualmente: mantener, reducir parcialmente o vender todo el ILF, y por qué? Incluí qué harías con los fondos en caso de vender.",
+          feedback: "Con perfil moderado y horizonte de 18 meses, la respuesta razonable es reducir parcialmente el ILF si la exposición al crudo es un riesgo que el cliente quiere limitar — no venderlo todo. ILF sigue siendo un buen vehículo de diversificación en Latam y tiene 40 empresas. Lo que puede tener sentido es bajar el peso relativo y agregar algo con menor correlación al petróleo. Con los fondos de la venta parcial: una combinación de CEDEARs de banco latinoamericano (más diversificado que BBAR) y/o mantener parte en liquidez para aprovechar oportunidades de entrada si el sector energético sobreajusta. No se recomienda mover todo a BBAR — ese cambio llevaría a un portafolio menos diversificado que el punto de partida."
+        }
+      ]
+    }
+  ]
+};
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+let tipoActual = null;
+let escenarioActual = 0;
+let preguntaActual = 0;
+let feedbackVisible = false;
+let escenarios = [];
+
+/* ============================================================
+   NAVEGACIÓN
+   ============================================================ */
+function abrirTipo(tipo) {
+  tipoActual = tipo;
+  escenarios = ESCENARIOS[tipo];
+  escenarioActual = 0;
+  preguntaActual = 0;
+  document.getElementById('screen-selector').hidden = true;
+  document.getElementById('screen-ejercicio').hidden = false;
+  renderEjercicio();
+}
+
+function volverSelector() {
+  document.getElementById('screen-selector').hidden = false;
+  document.getElementById('screen-ejercicio').hidden = true;
+  tipoActual = null;
+}
+
+/* ============================================================
+   RENDERIZADO DEL EJERCICIO ACTUAL
+   ============================================================ */
+function renderEjercicio() {
+  const esc = escenarios[escenarioActual];
+  const preg = esc.preguntas[preguntaActual];
+  feedbackVisible = false;
+
+  // Nav dots
+  const dots = document.getElementById('navDots');
+  dots.innerHTML = escenarios.map((_, i) =>
+    `<button class="nav-dot${i === escenarioActual ? ' activo' : ''}" onclick="irAEscenario(${i})" aria-label="Escenario ${i+1}"></button>`
+  ).join('');
+  document.getElementById('navCounter').textContent = `${escenarioActual + 1} / ${escenarios.length}`;
+
+  const card = document.getElementById('ejercicioCard');
+  card.innerHTML = `
+    <div class="ejercicio-meta">
+      <span class="tag tag-tipo">${tipoLabel()}</span>
+      <span class="tag tag-dif">${esc.dificultad}</span>
+    </div>
+    <div class="ejercicio-titulo">${esc.titulo}</div>
+    <div class="ejercicio-consigna">${esc.consigna}</div>
+    ${renderRecurso(esc)}
+    ${esc.contexto ? `<div class="contexto-box">${esc.contexto}</div>` : ''}
+    ${renderPreguntaActualHTML(esc, preg)}
+  `;
+
+  if (escenarios[escenarioActual].tipo === 'curva') {
+    setTimeout(() => dibujarCurva(esc), 50);
+  }
+}
+
+function tipoLabel() {
+  return { curva: 'Curva de bonos', caja: 'Caja de puntas', rotacion: 'Decisión de rotación' }[tipoActual];
+}
+
+/* ============================================================
+   RECURSOS VISUALES
+   ============================================================ */
+function renderRecurso(esc) {
+  if (esc.curva) return renderCurvaContainer(esc);
+  if (esc.libro) return renderCajaContainer(esc);
+  if (esc.instrumentos) return renderRotacionContainer(esc);
+  return '';
+}
+
+/* ---- Curva SVG ---- */
+function renderCurvaContainer(esc) {
+  return `
+    <div class="curva-container">
+      <div class="curva-titulo">${esc.titulo}</div>
+      <svg id="curvaSVG" class="curva-svg" viewBox="0 0 680 320"></svg>
+    </div>
+  `;
+}
+
+function dibujarCurva(esc) {
+  const svg = document.getElementById('curvaSVG');
+  if (!svg) return;
+  const { xMin, xMax, yMin, yMax, xLabel, yLabel, series } = esc.curva;
+
+  const W = 680, H = 320, pad = { top: 24, right: 20, bot: 52, left: 52 };
+  const pw = W - pad.left - pad.right;
+  const ph = H - pad.top - pad.bot;
+
+  const toX = v => pad.left + ((v - xMin) / (xMax - xMin)) * pw;
+  const toY = v => pad.top + ((yMax - v) / (yMax - yMin)) * ph;
+
+  let html = `<g>`;
+
+  // Grid y ejes
+  const xSteps = 6, ySteps = 6;
+  for (let i = 0; i <= ySteps; i++) {
+    const y = yMin + (yMax - yMin) * (i / ySteps);
+    const cy = toY(y);
+    html += `<line class="grid-line" x1="${pad.left}" y1="${cy}" x2="${W - pad.right}" y2="${cy}"/>`;
+    html += `<text class="axis-label" x="${pad.left - 6}" y="${cy + 4}" text-anchor="end">${y.toFixed(1)}${yLabel.includes('%') ? '%' : ''}</text>`;
+  }
+  for (let i = 0; i <= xSteps; i++) {
+    const x = xMin + (xMax - xMin) * (i / xSteps);
+    const cx = toX(x);
+    html += `<line class="grid-line" x1="${cx}" y1="${pad.top}" x2="${cx}" y2="${H - pad.bot}"/>`;
+    html += `<text class="axis-label" x="${cx}" y="${H - pad.bot + 14}" text-anchor="middle">${x % 1 === 0 ? x : x.toFixed(1)}</text>`;
+  }
+
+  // Ejes principales
+  html += `<line class="axis-line" x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${H - pad.bot}"/>`;
+  html += `<line class="axis-line" x1="${pad.left}" y1="${H - pad.bot}" x2="${W - pad.right}" y2="${H - pad.bot}"/>`;
+
+  // Etiquetas de ejes
+  html += `<text class="axis-title" x="${W / 2}" y="${H - 8}" text-anchor="middle">${xLabel}</text>`;
+  html += `<text class="axis-title" transform="rotate(-90 ${pad.left - 34} ${H/2})" x="${pad.left - 34}" y="${H/2 + 4}" text-anchor="middle">${yLabel}</text>`;
+
+  // Series
+  series.forEach(serie => {
+    const pts = serie.bonos.slice().sort((a, b) => a.md - b.md);
+    // Línea suavizada (catmull-rom simplificado)
+    if (pts.length > 1) {
+      const d = pts.map((p, i) => {
+        const cx = toX(p.md), cy = toY(p.yield);
+        return i === 0 ? `M ${cx} ${cy}` : `L ${cx} ${cy}`;
+      }).join(' ');
+      html += `<path class="curve-line ${serie.clase}" d="${d}" stroke-dasharray="${serie.clase.includes('al') ? '5,3' : 'none'}"/>`;
+    }
+
+    // Dots y etiquetas
+    serie.bonos.forEach(b => {
+      const cx = toX(b.md), cy = toY(b.yield);
+      const dc = b.highlight ? 'bond-dot-highlight' : serie.dotClase;
+      const lc = b.highlight ? 'bond-label-highlight' : serie.labelClase;
+      html += `<circle class="bond-dot ${dc}" cx="${cx}" cy="${cy}"/>`;
+      // Etiqueta arriba/abajo alternada para evitar solapamientos
+      const labelY = b.md > (xMin + xMax) / 2 ? cy - 10 : cy + 18;
+      html += `<text class="bond-label ${lc}" x="${cx}" y="${labelY}" text-anchor="middle">${b.ticker}</text>`;
+      html += `<text class="bond-label ${lc}" x="${cx}" y="${labelY + 12}" text-anchor="middle" style="font-weight:400;font-size:9.5px">${b.yield}%</text>`;
+    });
+  });
+
+  // Leyenda
+  let lx = pad.left;
+  series.forEach(serie => {
+    html += `<circle class="legend-dot ${serie.dotClase}" cx="${lx + 8}" cy="${H - 4}" r="5"/>`;
+    html += `<text class="legend-text" x="${lx + 18}" y="${H}">${serie.nombre}</text>`;
+    lx += 220;
+  });
+
+  html += `</g>`;
+  svg.innerHTML = html;
+}
+
+/* ---- Caja de puntas ---- */
+function renderCajaContainer(esc) {
+  const spread = (esc.libro.ask[0].px - esc.libro.bid[0].px).toFixed(2);
+  const spreadPct = ((esc.libro.ask[0].px - esc.libro.bid[0].px) / ((esc.libro.ask[0].px + esc.libro.bid[0].px) / 2) * 100).toFixed(2);
+
+  const buildSide = (rows, side) => rows.map((r, i) =>
+    `<tr${i === 0 ? ' class="best-line"' : ''}>
+      <td class="${side === 'bid' ? 'bid-qty' : 'ask-qty'}">${r.qty.toLocaleString()}</td>
+      <td class="${side === 'bid' ? 'bid-px' : 'ask-px'}">${r.px.toFixed(2)}${r.tir ? ` <span style="font-weight:400;opacity:.7;font-size:.75em">(${r.tir}%)</span>` : ''}</td>
+    </tr>`
+  ).join('');
+
+  return `
+    <div style="margin-bottom:.75rem">
+      <span style="font-family:var(--font-mono);font-size:.78rem;color:var(--ink-soft);">
+        <strong>${esc.activo}</strong> &nbsp;·&nbsp; Último operado: <strong>${esc.ultimoOperado.toFixed(2)}</strong>
+      </span>
+    </div>
+    <div class="spread-badge">Spread: ${spread} &nbsp;·&nbsp; ${spreadPct}%</div>
+    <div class="caja-wrapper">
+      <div class="caja-panel">
+        <div class="caja-header">▼ Compras (Bid)</div>
+        <table class="caja-table">
+          <thead><tr><th>Cant.</th><th>Precio bid</th></tr></thead>
+          <tbody>${buildSide(esc.libro.bid, 'bid')}</tbody>
+        </table>
+        <div class="caja-meta">Primera línea: ${esc.libro.bid[0].qty} nominales disponibles</div>
+      </div>
+      <div class="caja-panel">
+        <div class="caja-header">▲ Ventas (Ask)</div>
+        <table class="caja-table">
+          <thead><tr><th>Cant.</th><th>Precio ask</th></tr></thead>
+          <tbody>${buildSide(esc.libro.ask, 'ask')}</tbody>
+        </table>
+        <div class="caja-meta">Primera línea: ${esc.libro.ask[0].qty} nominales ofrecidos</div>
+      </div>
+    </div>
+  `;
+}
+
+/* ---- Rotación ---- */
+function renderRotacionContainer(esc) {
+  const cards = esc.instrumentos.map(inst => `
+    <div class="rotacion-card${inst.tag === 'Posición actual' ? '' : ' highlighted'}">
+      <div class="rotacion-nombre">
+        ${inst.nombre}
+        <span class="rotacion-tag">${inst.tag}</span>
+      </div>
+      ${inst.datos.map(d => `
+        <div class="rotacion-dato">
+          <span class="label">${d.label}</span>
+          <span class="valor ${d.clase || ''}">${d.valor}</span>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+  return `<div class="rotacion-grid">${cards}</div>`;
+}
+
+/* ============================================================
+   ÁREA DE PREGUNTA Y RESPUESTA
+   ============================================================ */
+function renderPreguntaActualHTML(esc, preg) {
+  const totalPregs = esc.preguntas.length;
+  const navPregs = totalPregs > 1
+    ? `<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem">
+        ${esc.preguntas.map((_, i) =>
+          `<button onclick="irAPregunta(${i})" style="width:7px;height:7px;border-radius:50%;border:none;background:${i===preguntaActual?'var(--teal)':'var(--rule-strong)'};cursor:pointer"></button>`
+        ).join('')}
+        <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--ink-faint);margin-left:.25rem">Pregunta ${preguntaActual+1} / ${totalPregs}</span>
+      </div>`
+    : '';
+
+  const opciones = preg.tipo === 'mc'
+    ? `<div class="opciones-lista">${preg.opciones.map((o, i) =>
+        `<button class="opcion-btn" onclick="responder(${i})">
+          <span class="opcion-letra">${['A','B','C','D'][i]}</span>
+          <span>${o}</span>
+        </button>`
+      ).join('')}</div>`
+    : `<textarea class="respuesta-textarea" id="txtAbierta" rows="5" placeholder="Escribí tu respuesta acá, como si se la explicaras a un cliente…"></textarea>
+       <div class="btn-row">
+         <button class="btn btn-primary" onclick="revelarAbierta()">Ver respuesta modelo</button>
+       </div>`;
+
+  const botonesNav = `
+    <div class="btn-row" style="margin-top:1rem">
+      ${preguntaActual > 0 ? `<button class="btn btn-outline" onclick="irAPregunta(${preguntaActual - 1})">← Pregunta anterior</button>` : ''}
+      ${preguntaActual < totalPregs - 1 ? `<button class="btn btn-outline" onclick="irAPregunta(${preguntaActual + 1})" id="btnSigPreg">Siguiente pregunta →</button>` : ''}
+      <button class="btn btn-outline" onclick="irAEscenario(${(escenarioActual + 1) % escenarios.length})">
+        ${escenarioActual < escenarios.length - 1 ? 'Siguiente escenario →' : '↺ Volver al primero'}
+      </button>
+    </div>
+  `;
+
+  return `
+    <div class="respuesta-section">
+      ${navPregs}
+      <div class="respuesta-label">Tu análisis</div>
+      <p style="font-family:var(--font-serif);font-size:1.08rem;line-height:1.5;color:var(--ink);margin-bottom:1.1rem">${preg.enunciado}</p>
+      ${opciones}
+      <div id="feedbackArea"></div>
+      ${botonesNav}
+    </div>
+  `;
+}
+
+/* ============================================================
+   LÓGICA DE RESPUESTA
+   ============================================================ */
+function responder(idx) {
+  if (feedbackVisible) return;
+  const preg = escenarios[escenarioActual].preguntas[preguntaActual];
+  const botonesOpc = document.querySelectorAll('.opcion-btn');
+  feedbackVisible = true;
+
+  botonesOpc.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === preg.correcta) btn.classList.add('correcta');
+    if (i === idx && idx !== preg.correcta) btn.classList.add('incorrecta');
+  });
+
+  const esCorrecta = idx === preg.correcta;
+  mostrarFeedback(esCorrecta ? 'correcta' : 'incorrecta', esCorrecta ? 'Correcto' : 'No era esa', preg.feedback);
+}
+
+function revelarAbierta() {
+  if (feedbackVisible) return;
+  feedbackVisible = true;
+  const txt = document.getElementById('txtAbierta');
+  if (txt) txt.disabled = true;
+  document.querySelectorAll('.btn-primary').forEach(b => b.disabled = true);
+  mostrarFeedback('neutral', 'Respuesta modelo', escenarios[escenarioActual].preguntas[preguntaActual].feedback);
+}
+
+function mostrarFeedback(clase, titulo, texto) {
+  const iconos = { correcta: '✓', incorrecta: '✕', neutral: 'i' };
+  document.getElementById('feedbackArea').innerHTML = `
+    <div class="feedback-panel ${clase}">
+      <div class="feedback-header">
+        <span class="feedback-icon">${iconos[clase]}</span>
+        <span class="feedback-titulo">${titulo}</span>
+      </div>
+      <div class="feedback-texto">${texto}</div>
+    </div>
+  `;
+  document.getElementById('feedbackArea').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* ============================================================
+   NAVEGACIÓN ENTRE ESCENARIOS Y PREGUNTAS
+   ============================================================ */
+function irAEscenario(idx) {
+  escenarioActual = idx;
+  preguntaActual = 0;
+  renderEjercicio();
+}
+
+function irAPregunta(idx) {
+  preguntaActual = idx;
+  renderEjercicio();
+}
+</script>
+</body>
+</html>
