@@ -1197,7 +1197,7 @@ function renderEjercicio() {
     ${renderPreguntaActualHTML(esc, preg)}
   `;
 
-  if (escenarios[escenarioActual].tipo === 'curva') {
+  if (esc.curva) {
     setTimeout(() => dibujarCurva(esc), 50);
   }
 }
@@ -1231,73 +1231,101 @@ function dibujarCurva(esc) {
   if (!svg) return;
   const { xMin, xMax, yMin, yMax, xLabel, yLabel, series } = esc.curva;
 
-  const W = 680, H = 320, pad = { top: 24, right: 20, bot: 52, left: 52 };
+  const W = 680, H = 320, pad = { top: 24, right: 20, bot: 52, left: 58 };
   const pw = W - pad.left - pad.right;
   const ph = H - pad.top - pad.bot;
 
   const toX = v => pad.left + ((v - xMin) / (xMax - xMin)) * pw;
   const toY = v => pad.top + ((yMax - v) / (yMax - yMin)) * ph;
 
-  let html = `<g>`;
+  // Paleta inline — no depende del CSS externo
+  const COLOR_TEAL   = '#2D6A6E';
+  const COLOR_GREY   = '#8A9294';
+  const COLOR_GOLD   = '#B68A3D';
+  const COLOR_PAPER  = '#FBF9F3';
+  const COLOR_RULE   = '#D8D2C0';
+  const COLOR_FAINT  = '#8A9294';
+  const COLOR_SOFT   = '#4A5759';
+  const FONT = '"Inter", system-ui, sans-serif';
 
-  // Grid y ejes
-  const xSteps = 6, ySteps = 6;
+  const DOT_COLORS = [COLOR_TEAL, COLOR_GREY, COLOR_GOLD];
+  const LINE_DASHES = ['none', '5,3', '2,4'];
+
+  let g = '';
+
+  // Grid horizontal
+  const ySteps = 6;
   for (let i = 0; i <= ySteps; i++) {
     const y = yMin + (yMax - yMin) * (i / ySteps);
     const cy = toY(y);
-    html += `<line class="grid-line" x1="${pad.left}" y1="${cy}" x2="${W - pad.right}" y2="${cy}"/>`;
-    html += `<text class="axis-label" x="${pad.left - 6}" y="${cy + 4}" text-anchor="end">${y.toFixed(1)}${yLabel.includes('%') ? '%' : ''}</text>`;
+    g += `<line x1="${pad.left}" y1="${cy}" x2="${W - pad.right}" y2="${cy}" stroke="${COLOR_RULE}" stroke-width="0.5" stroke-dasharray="3,4"/>`;
+    const label = yLabel.includes('%') ? y.toFixed(1) + '%' : y.toFixed(1);
+    g += `<text x="${pad.left - 6}" y="${cy + 4}" text-anchor="end" font-family="${FONT}" font-size="11" fill="${COLOR_FAINT}">${label}</text>`;
   }
+
+  // Grid vertical
+  const xSteps = 6;
   for (let i = 0; i <= xSteps; i++) {
     const x = xMin + (xMax - xMin) * (i / xSteps);
     const cx = toX(x);
-    html += `<line class="grid-line" x1="${cx}" y1="${pad.top}" x2="${cx}" y2="${H - pad.bot}"/>`;
-    html += `<text class="axis-label" x="${cx}" y="${H - pad.bot + 14}" text-anchor="middle">${x % 1 === 0 ? x : x.toFixed(1)}</text>`;
+    g += `<line x1="${cx}" y1="${pad.top}" x2="${cx}" y2="${H - pad.bot}" stroke="${COLOR_RULE}" stroke-width="0.5" stroke-dasharray="3,4"/>`;
+    const label = x % 1 === 0 ? x.toString() : x.toFixed(1);
+    g += `<text x="${cx}" y="${H - pad.bot + 15}" text-anchor="middle" font-family="${FONT}" font-size="11" fill="${COLOR_FAINT}">${label}</text>`;
   }
 
   // Ejes principales
-  html += `<line class="axis-line" x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${H - pad.bot}"/>`;
-  html += `<line class="axis-line" x1="${pad.left}" y1="${H - pad.bot}" x2="${W - pad.right}" y2="${H - pad.bot}"/>`;
+  g += `<line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${H - pad.bot}" stroke="${COLOR_SOFT}" stroke-width="1"/>`;
+  g += `<line x1="${pad.left}" y1="${H - pad.bot}" x2="${W - pad.right}" y2="${H - pad.bot}" stroke="${COLOR_SOFT}" stroke-width="1"/>`;
 
-  // Etiquetas de ejes
-  html += `<text class="axis-title" x="${W / 2}" y="${H - 8}" text-anchor="middle">${xLabel}</text>`;
-  html += `<text class="axis-title" transform="rotate(-90 ${pad.left - 34} ${H/2})" x="${pad.left - 34}" y="${H/2 + 4}" text-anchor="middle">${yLabel}</text>`;
+  // Títulos de ejes
+  g += `<text x="${W / 2}" y="${H - 6}" text-anchor="middle" font-family="${FONT}" font-size="11" font-weight="600" fill="${COLOR_SOFT}">${xLabel}</text>`;
+  g += `<text transform="rotate(-90 ${pad.left - 42} ${H / 2})" x="${pad.left - 42}" y="${H / 2 + 4}" text-anchor="middle" font-family="${FONT}" font-size="11" font-weight="600" fill="${COLOR_SOFT}">${yLabel}</text>`;
 
   // Series
-  series.forEach(serie => {
+  series.forEach((serie, si) => {
+    const color = DOT_COLORS[si % DOT_COLORS.length];
+    const dashArray = LINE_DASHES[si % LINE_DASHES.length];
     const pts = serie.bonos.slice().sort((a, b) => a.md - b.md);
-    // Línea suavizada (catmull-rom simplificado)
+
+    // Línea de curva
     if (pts.length > 1) {
       const d = pts.map((p, i) => {
         const cx = toX(p.md), cy = toY(p.yield);
-        return i === 0 ? `M ${cx} ${cy}` : `L ${cx} ${cy}`;
+        return i === 0 ? `M ${cx.toFixed(1)} ${cy.toFixed(1)}` : `L ${cx.toFixed(1)} ${cy.toFixed(1)}`;
       }).join(' ');
-      html += `<path class="curve-line ${serie.clase}" d="${d}" stroke-dasharray="${serie.clase.includes('al') ? '5,3' : 'none'}"/>`;
+      g += `<path d="${d}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="${dashArray}" opacity="0.7"/>`;
     }
 
-    // Dots y etiquetas
-    serie.bonos.forEach(b => {
+    // Dots + etiquetas
+    serie.bonos.forEach((b, bi) => {
       const cx = toX(b.md), cy = toY(b.yield);
-      const dc = b.highlight ? 'bond-dot-highlight' : serie.dotClase;
-      const lc = b.highlight ? 'bond-label-highlight' : serie.labelClase;
-      html += `<circle class="bond-dot ${dc}" cx="${cx}" cy="${cy}"/>`;
-      // Etiqueta arriba/abajo alternada para evitar solapamientos
-      const labelY = b.md > (xMin + xMax) / 2 ? cy - 10 : cy + 18;
-      html += `<text class="bond-label ${lc}" x="${cx}" y="${labelY}" text-anchor="middle">${b.ticker}</text>`;
-      html += `<text class="bond-label ${lc}" x="${cx}" y="${labelY + 12}" text-anchor="middle" style="font-weight:400;font-size:9.5px">${b.yield}%</text>`;
+      const dotColor = b.highlight ? COLOR_GOLD : color;
+      const labelColor = b.highlight ? '#7E5C1A' : color;
+
+      // Dot con borde blanco
+      g += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="5" fill="${dotColor}" stroke="${COLOR_PAPER}" stroke-width="1.5"/>`;
+
+      // Posición de etiqueta — alternamos arriba/abajo para reducir solapamientos
+      const isRightHalf = b.md > (xMin + xMax) / 2;
+      const labelOffsetY = (bi % 2 === 0) ? -12 : 20;
+      const ly = cy + labelOffsetY;
+
+      g += `<text x="${cx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" font-family="${FONT}" font-size="10" font-weight="700" fill="${labelColor}">${b.ticker}</text>`;
+      g += `<text x="${cx.toFixed(1)}" y="${(ly + 11).toFixed(1)}" text-anchor="middle" font-family="${FONT}" font-size="9.5" fill="${labelColor}" opacity="0.85">${b.yield}%</text>`;
     });
   });
 
-  // Leyenda
+  // Leyenda (abajo izquierda dentro del gráfico)
   let lx = pad.left;
-  series.forEach(serie => {
-    html += `<circle class="legend-dot ${serie.dotClase}" cx="${lx + 8}" cy="${H - 4}" r="5"/>`;
-    html += `<text class="legend-text" x="${lx + 18}" y="${H}">${serie.nombre}</text>`;
-    lx += 220;
+  const ly = H - pad.bot + 32;
+  series.forEach((serie, si) => {
+    const color = DOT_COLORS[si % DOT_COLORS.length];
+    g += `<circle cx="${lx + 6}" cy="${ly - 3}" r="5" fill="${color}"/>`;
+    g += `<text x="${lx + 16}" y="${ly}" font-family="${FONT}" font-size="11" fill="${COLOR_SOFT}">${serie.nombre}</text>`;
+    lx += Math.min(240, (W - pad.left - pad.right) / series.length);
   });
 
-  html += `</g>`;
-  svg.innerHTML = html;
+  svg.innerHTML = `<g>${g}</g>`;
 }
 
 /* ---- Caja de puntas ---- */
