@@ -212,6 +212,69 @@ button{font-family:inherit;cursor:pointer}
    ============================================================ */
 .app-footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--rule);font-size:.76rem;color:var(--ink-faint)}
 @media(max-width:600px){.app-shell{padding:0 1.1rem 3rem}.rotacion-grid{grid-template-columns:1fr}.caja-wrapper{flex-direction:column}}
+
+/* ============================================================
+   ÁRBOL DE DECISIÓN — pasos guiados
+   ============================================================ */
+.arbol-pasos{display:flex;flex-direction:column;gap:1.5rem;margin-bottom:1.5rem}
+
+.arbol-paso{border:1.5px solid var(--rule);border-radius:var(--radius-md);overflow:hidden;transition:border-color .2s}
+.arbol-paso.activo{border-color:var(--teal)}
+.arbol-paso.completado{border-color:var(--olive);opacity:.85}
+.arbol-paso.bloqueado{opacity:.45;pointer-events:none}
+
+.paso-header{display:flex;align-items:center;gap:.75rem;padding:.9rem 1.1rem;background:var(--paper-raised);border-bottom:1px solid var(--rule)}
+.arbol-paso.activo .paso-header{background:rgba(45,106,110,.06);border-bottom-color:rgba(45,106,110,.2)}
+.arbol-paso.completado .paso-header{background:rgba(122,139,92,.07);border-bottom-color:rgba(122,139,92,.2)}
+
+.paso-num{width:1.6rem;height:1.6rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.75rem;font-weight:700;flex-shrink:0;background:var(--rule);color:var(--ink-soft)}
+.arbol-paso.activo .paso-num{background:var(--teal);color:var(--paper)}
+.arbol-paso.completado .paso-num{background:var(--olive);color:var(--paper)}
+.paso-titulo{font-weight:600;font-size:.95rem;color:var(--ink)}
+.arbol-paso.bloqueado .paso-titulo{color:var(--ink-faint)}
+.paso-check{margin-left:auto;font-size:.85rem;color:var(--olive-deep);font-weight:700}
+
+.paso-body{padding:1.1rem 1.2rem}
+
+/* Selección múltiple con checkboxes visuales */
+.multi-opcion{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem .9rem;border:1.5px solid var(--rule-strong);border-radius:var(--radius-md);margin-bottom:.55rem;cursor:pointer;transition:border-color .15s,background .15s;user-select:none}
+.multi-opcion:hover{border-color:var(--teal);background:rgba(45,106,110,.03)}
+.multi-opcion.seleccionada{border-color:var(--teal);background:rgba(45,106,110,.07)}
+.multi-opcion.correcta-marcada{border-color:var(--olive);background:rgba(122,139,92,.1)}
+.multi-opcion.incorrecta-marcada{border-color:var(--terracotta);background:rgba(168,69,58,.07)}
+.multi-opcion.correcta-no-marcada{border-color:var(--gold);background:rgba(182,138,61,.07)}
+
+.checkbox-visual{width:1.1rem;height:1.1rem;border:2px solid var(--rule-strong);border-radius:3px;flex-shrink:0;margin-top:.15rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.multi-opcion.seleccionada .checkbox-visual{border-color:var(--teal);background:var(--teal)}
+.multi-opcion.correcta-marcada .checkbox-visual{border-color:var(--olive);background:var(--olive)}
+.multi-opcion.incorrecta-marcada .checkbox-visual{border-color:var(--terracotta);background:var(--terracotta)}
+.multi-opcion.correcta-no-marcada .checkbox-visual{border-color:var(--gold);background:transparent}
+.checkbox-tick{color:var(--paper);font-size:.7rem;font-weight:700;display:none}
+.multi-opcion.seleccionada .checkbox-tick,
+.multi-opcion.correcta-marcada .checkbox-tick,
+.multi-opcion.incorrecta-marcada .checkbox-tick{display:block}
+
+.multi-opcion-texto{font-size:.92rem;line-height:1.5;color:var(--ink)}
+.multi-opcion.bloqueada{pointer-events:none;opacity:.6}
+
+.multi-instruccion{font-size:.8rem;color:var(--ink-faint);margin-bottom:.85rem;font-style:italic}
+
+.resultado-multi{padding:.85rem 1rem;border-radius:var(--radius-md);margin-top:.75rem;font-size:.88rem;line-height:1.5}
+.resultado-multi.bien{background:rgba(122,139,92,.1);border:1px solid rgba(122,139,92,.3);color:var(--olive-deep)}
+.resultado-multi.parcial{background:rgba(182,138,61,.1);border:1px solid rgba(182,138,61,.3);color:#6B4D0F}
+.resultado-multi.mal{background:rgba(168,69,58,.08);border:1px solid rgba(168,69,58,.25);color:var(--terracotta-deep)}
+
+/* Contexto BOPREAL */
+.bopreal-contexto{background:var(--paper);border:1px solid var(--rule);border-radius:var(--radius-md);padding:1.1rem 1.25rem;margin-bottom:1.4rem}
+.bopreal-titulo{font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);font-weight:600;margin-bottom:.75rem}
+.bopreal-tabla{width:100%;border-collapse:collapse;font-size:.88rem}
+.bopreal-tabla th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-faint);padding:.3rem .5rem;text-align:right;border-bottom:1px solid var(--rule)}
+.bopreal-tabla th:first-child{text-align:left}
+.bopreal-tabla td{padding:.4rem .5rem;text-align:right;border-bottom:1px solid rgba(216,210,192,.4);font-family:var(--font-mono)}
+.bopreal-tabla td:first-child{text-align:left;font-family:var(--font-sans);font-weight:600}
+.bopreal-tabla tr.destacado td{color:var(--gold)}
+.alerta-tir{display:inline-flex;align-items:center;gap:.5rem;background:rgba(182,138,61,.12);border:1px solid rgba(182,138,61,.35);border-radius:999px;padding:.35rem .9rem;font-family:var(--font-mono);font-size:.82rem;color:#6B4D0F;font-weight:600;margin-top:.85rem}
+
 </style>
 </head>
 <body>
@@ -257,6 +320,12 @@ button{font-family:inherit;cursor:pointer}
           <div class="tipo-desc">Con dos instrumentos en pantalla y contexto macro, evaluás si conviene rotar, por qué y qué le decís al cliente.</div>
           <div class="tipo-count">5 escenarios</div>
         </button>
+        <button class="tipo-card" onclick="abrirTipo('arbol')">
+          <span class="tipo-icon">🔀</span>
+          <div class="tipo-name">¿Qué hago si…?</div>
+          <div class="tipo-desc">Situaciones reales de mercado con un árbol de decisión guiado: primero identificás el objetivo, después evaluás las opciones y por último entendés qué resignás al moverte.</div>
+          <div class="tipo-count">7 escenarios</div>
+        </button>
       </div>
     </section>
 
@@ -279,7 +348,7 @@ button{font-family:inherit;cursor:pointer}
   </main>
 
   <footer class="app-footer">
-    Datos de referencia basados en informes Inviu Research (feb–jun 2026). Los precios y yields son ilustrativos para práctica — no constituyen recomendación de inversión.
+    Datos de referencia basados en informes Inviu Research (feb–jun 2026). Los precios y rendimientos son ilustrativos para práctica — no constituyen recomendación de inversión.
   </footer>
 </div>
 
@@ -299,7 +368,7 @@ const ESCENARIOS = {
       consigna: "La curva muestra los bonos soberanos argentinos en dólares. Los puntos verdes son Globales (ley NY / GDs), los grises son Bonares (ley argentina / ALs). Observá la curva y respondé.",
       curva: {
         xLabel: "Duration modificada",
-        yLabel: "Yield",
+        yLabel: "TIR",
         xMin: 0.8, xMax: 6.8, yMin: 4.0, yMax: 11.0,
         series: [
           {
@@ -331,7 +400,7 @@ const ESCENARIOS = {
       preguntas: [
         {
           tipo: "mc",
-          enunciado: "Un cliente tiene AL30 (7,18% yield, duration 1,72) y quiere más yield. Le ofrecés el AE38 (9,44%, duration 4,92). ¿Cuál es el matiz más importante que tenés que comunicarle antes de recomendar el cambio?",
+          enunciado: "Un cliente tiene AL30 (7,18% de TIR, duration 1,72) y quiere más TIR. Le ofrecés el AE38 (9,44%, duration 4,92). ¿Cuál es el matiz más importante que tenés que comunicarle antes de recomendar el cambio?",
           opciones: [
             "Que el AE38 rinde más, así que la decisión es directa: conviene cambiar",
             "Que el AE38 tiene casi 3 veces más duration: por el mismo movimiento de spread, su precio va a subir (o caer) mucho más; el rendimiento extra viene con mayor sensibilidad a tasas",
@@ -339,7 +408,7 @@ const ESCENARIOS = {
             "Que la duration no afecta al precio mientras el bono no venza"
           ],
           correcta: 1,
-          feedback: "Exacto. El diferencial de yield entre AL30 y AE38 es atractivo (~226 bps), pero el diferencial de duration es enorme: de 1,72 a 4,92. Usando la regla de duration como aproximación, si el spread soberano se mueve +100 bps, el AL30 cae ~1,7% de precio; el AE38 cae ~4,9%. El inversor que entra buscando más carry tiene que aceptar también mucha más volatilidad de precio. Siempre comunicar ese trade-off antes de cerrar la operación."
+          feedback: "Exacto. El diferencial de TIR entre AL30 y AE38 es atractivo (~226 bps), pero el diferencial de duration es enorme: de 1,72 a 4,92. Usando la regla de duration como aproximación, si el spread soberano se mueve +100 bps, el AL30 cae ~1,7% de precio; el AE38 cae ~4,9%. El inversor que entra buscando más carry tiene que aceptar también mucha más volatilidad de precio. Siempre comunicar ese trade-off antes de cerrar la operación."
         },
         {
           tipo: "mc",
@@ -347,16 +416,16 @@ const ESCENARIOS = {
           opciones: [
             "Que el AL29 paga más cupón, así que es más caro de emitir",
             "Que el GD29 tiene ley Nueva York, lo que le da al bonista mejores condiciones legales ante un eventual default; el mercado le pone un precio a esa protección adicional",
-            "Que el AL29 tiene más duration, así que compensa con más yield",
+            "Que el AL29 tiene más duration, así que compensa con más TIR",
             "Que los Globales siempre rinden menos porque Argentina los prefiere"
           ],
           correcta: 1,
-          feedback: "El diferencial ley NY / ley AR es uno de los spreads más seguidos en el mercado argentino. La jurisdicción importa: con ley Nueva York, el bonista tiene acceso a tribunales extranjeros con mecanismos de ejecución más robustos ante un incumplimiento. El mercado descuenta esa protección con un menor yield exigido para los GDs. No es 'magia' — es precio de riesgo legal."
+          feedback: "El diferencial ley NY / ley AR es uno de los spreads más seguidos en el mercado argentino. La jurisdicción importa: con ley Nueva York, el bonista tiene acceso a tribunales extranjeros con mecanismos de ejecución más robustos ante un incumplimiento. El mercado descuenta esa protección con una menor TIR exigida para los GDs. No es 'magia' — es precio de riesgo legal."
         },
         {
           tipo: "abierta",
-          enunciado: "Mirá la curva de los Bonares (ALs). El AL30 tiene yield 7,18% y duration 1,72, mientras el AE38 tiene yield 9,44% y duration 4,92, y el AL41 tiene yield 9,24% y duration 5,65. El AE38 rinde más que el AL41 siendo más corto. ¿Qué señal te da eso? ¿Cómo se lo explicarías a un cliente en dos o tres líneas?",
-          feedback: "El AE38 rindiendo más que el AL41 con menor duration es un 'outlier' respecto a la lógica normal de la curva (a más duration, más yield). Eso puede reflejar un atributo específico del bono que el mercado penaliza: diferente estructura de amortización, menor liquidez, o condiciones contractuales particulares. No es una oportunidad automática — es una señal de que hay algo que investigar. Para el cliente: 'Ese bono rinde más de lo que esperaría por su plazo, lo cual puede ser una oportunidad o una advertencia; antes de entrar hay que entender por qué se lo está penalizando.'"
+          enunciado: "Mirá la curva de los Bonares (ALs). El AL30 tiene TIR 7,18% y duration 1,72, mientras el AE38 tiene TIR 9,44% y duration 4,92, y el AL41 tiene TIR 9,24% y duration 5,65. El AE38 rinde más que el AL41 siendo más corto. ¿Qué señal te da eso? ¿Cómo se lo explicarías a un cliente en dos o tres líneas?",
+          feedback: "El AE38 rindiendo más que el AL41 con menor duration es un 'outlier' respecto a la lógica normal de la curva (a más duration, más TIR). Eso puede reflejar un atributo específico del bono que el mercado penaliza: diferente estructura de amortización, menor liquidez, o condiciones contractuales particulares. No es una oportunidad automática — es una señal de que hay algo que investigar. Para el cliente: 'Ese bono rinde más de lo que esperaría por su plazo, lo cual puede ser una oportunidad o una advertencia; antes de entrar hay que entender por qué se lo está penalizando.'"
         }
       ]
     },
@@ -365,7 +434,7 @@ const ESCENARIOS = {
       id: "curva-02",
       titulo: "Curva CER soberanos — leyendo expectativas de inflación",
       dificultad: "avanzada",
-      consigna: "La curva muestra bonos soberanos ajustados por CER, con su tasa real (yield sobre inflación) y duration. Interpretá lo que te dice sobre las expectativas del mercado.",
+      consigna: "La curva muestra bonos soberanos ajustados por CER, con su tasa real (TIR sobre inflación) y duration. Interpretá lo que te dice sobre las expectativas del mercado.",
       curva: {
         xLabel: "Duration modificada",
         yLabel: "Tasa real (CER+)",
@@ -405,7 +474,7 @@ const ESCENARIOS = {
           enunciado: "Los bonos CER de muy corto plazo (TX26, X31L6) muestran tasas reales fuertemente negativas (-9,78% y -5,56%). ¿Qué implica que el mercado acepte tasas reales tan negativas en el tramo corto?",
           opciones: [
             "Que esos bonos van a perder valor seguro y nadie debería tenerlos",
-            "Que hay demanda de cobertura de corto plazo contra inflación tan fuerte que el mercado paga un 'seguro': acepta yield negativo a cambio de garantizarse el ajuste CER en el tramo inmediato",
+            "Que hay demanda de cobertura de corto plazo contra inflación tan fuerte que el mercado paga un 'seguro': acepta TIR negativa a cambio de garantizarse el ajuste CER en el tramo inmediato",
             "Que el CER de ese plazo no ajusta por inflación",
             "Que es un error de pantalla que hay que ignorar"
           ],
@@ -417,7 +486,7 @@ const ESCENARIOS = {
           enunciado: "El TXMJ8 aparece con tasa real de 4,22% mientras bonos de duration similar (TXMJ9 a 5,45%, TZX28 a 6,90%) rinden bastante más. ¿Qué deberías investigar antes de entrar al TXMJ8 por ser 'el más barato de los tres'?",
           opciones: [
             "Nada, si rinde menos claramente es el peor y hay que evitarlo siempre",
-            "Si hay una razón que justifique el menor yield: diferente liquidez, estructura de amortización particular, o características contractuales que el mercado esté penalizando o premiando",
+            "Si hay una razón que justifique la menor TIR: diferente liquidez, estructura de amortización particular, o características contractuales que el mercado esté penalizando o premiando",
             "Si el bono tiene una tasa de cupón más alta que los otros",
             "Si tiene más duration, que sería el único motivo posible"
           ],
@@ -468,17 +537,17 @@ const ESCENARIOS = {
           enunciado: "La S30O6 aparece con TEM 1,68% mientras bonos de plazo similar (S30S6 a 1,70%, S30N6 a 1,77%) rinden más. Un cliente quiere comprar 'la que más rinde'. ¿Qué le señalás sobre la S30O6?",
           opciones: [
             "Que es la mejor opción porque tiene el precio más bajo",
-            "Que rinde menos que sus vecinos de plazo similar, lo que puede reflejar mayor liquidez o demanda puntual de ese instrumento; antes de elegir solo por yield hay que mirar también por qué ese punto está por debajo de la curva",
+            "Que rinde menos que sus vecinos de plazo similar, lo que puede reflejar mayor liquidez o demanda puntual de ese instrumento; antes de elegir solo por TIR hay que mirar también por qué ese punto está por debajo de la curva",
             "Que hay que comprarla ya porque está 'barata'",
             "Que la TEM no es comparable entre instrumentos de distintos plazos"
           ],
           correcta: 1,
-          feedback: "La S30O6 por debajo de la curva puede significar varias cosas: es muy líquida y el mercado la demanda más, tiene alguna característica particular que el mercado valora, o simplemente es un desfasaje temporal. El punto clave es que 'rinde menos' no significa automáticamente 'mala inversión' — puede significar que el mercado la está comprando más, lo cual sube el precio y baja el yield. El primer paso siempre es preguntarse por qué está donde está, no asumir."
+          feedback: "La S30O6 por debajo de la curva puede significar varias cosas: es muy líquida y el mercado la demanda más, tiene alguna característica particular que el mercado valora, o simplemente es un desfasaje temporal. El punto clave es que 'rinde menos' no significa automáticamente 'mala inversión' — puede significar que el mercado la está comprando más, lo cual sube el precio y baja la TIR. El primer paso siempre es preguntarse por qué está donde está, no asumir."
         },
         {
           tipo: "abierta",
-          enunciado: "Un cliente tiene efectivo en pesos que no necesita por 3 meses. Mirando esta curva, ¿qué rango de plazos le sugerirías explorar y por qué? ¿Qué trade-off entre plazo y yield le comunicarías?",
-          feedback: "Para 3 meses (aprox. 90 días), la zona relevante en esta curva es aproximadamente S15S6 (87 días, 1,82%) o S30S6 (138 días, 1,70%). La S15S6 calza mejor con el horizonte del cliente. El trade-off a comunicar: estirar un poco el plazo (por ejemplo a 138 días) no mejora el yield en este caso — de hecho lo empeora levemente — así que no tiene sentido alargar más allá de lo necesario. Si el cliente pudiera estirar a ~200 días, la curva mejora (T15E7 al 1,91%). Siempre comunicar: a tasa fija, si las tasas suben durante el período, el cliente tiene su rendimiento asegurado pero podría haber obtenido más yendo más corto y renovando; si las tasas bajan, habrá asegurado un buen rendimiento."
+          enunciado: "Un cliente tiene efectivo en pesos que no necesita por 3 meses. Mirando esta curva, ¿qué rango de plazos le sugerirías explorar y por qué? ¿Qué trade-off entre plazo y TIR le comunicarías?",
+          feedback: "Para 3 meses (aprox. 90 días), la zona relevante en esta curva es aproximadamente S15S6 (87 días, 1,82%) o S30S6 (138 días, 1,70%). La S15S6 calza mejor con el horizonte del cliente. El trade-off a comunicar: estirar un poco el plazo (por ejemplo a 138 días) no mejora la TIR en este caso — de hecho lo empeora levemente — así que no tiene sentido alargar más allá de lo necesario. Si el cliente pudiera estirar a ~200 días, la curva mejora (T15E7 al 1,91%). Siempre comunicar: a tasa fija, si las tasas suben durante el período, el cliente tiene su rendimiento asegurado pero podría haber obtenido más yendo más corto y renovando; si las tasas bajan, habrá asegurado un buen rendimiento."
         }
       ]
     },
@@ -487,10 +556,10 @@ const ESCENARIOS = {
       id: "curva-04",
       titulo: "Spread ley NY vs ley AR — ¿cuándo conviene pagar ese spread?",
       dificultad: "avanzada",
-      consigna: "El diferencial entre Globales (GDs) y Bonares (ALs) de duration similar es el 'spread de jurisdicción'. Analizá cuándo tiene sentido para un cliente pagar menos yield para tener ley NY.",
+      consigna: "El diferencial entre Globales (GDs) y Bonares (ALs) de duration similar es el 'spread de jurisdicción'. Analizá cuándo tiene sentido para un cliente pagar menos TIR para tener ley NY.",
       curva: {
         xLabel: "Duration modificada",
-        yLabel: "Yield",
+        yLabel: "TIR",
         xMin: 0.8, xMax: 6.8, yMin: 4.0, yMax: 11.0,
         series: [
           {
@@ -517,10 +586,10 @@ const ESCENARIOS = {
       preguntas: [
         {
           tipo: "mc",
-          enunciado: "Un cliente institucional quiere bonos soberanos y puede elegir entre GD30 (5,98%) y AL30 (7,18%), ambos con duration similar. El cliente va a mantenerlos 3 años mínimo. ¿Cuál de estos argumentos pesa más para elegir el GD30 a pesar del menor yield?",
+          enunciado: "Un cliente institucional quiere bonos soberanos y puede elegir entre GD30 (TIR 5,98%) y AL30 (TIR 7,18%), ambos con duration similar. El cliente va a mantenerlos 3 años mínimo. ¿Cuál de estos argumentos pesa más para elegir el GD30 a pesar de la menor TIR?",
           opciones: [
             "Que el GD30 tiene mejor precio de pantalla",
-            "Que ante un escenario de estrés de deuda, la ley NY ofrece mayor protección legal al bonista; para un horizonte largo donde ese escenario no es descartable, ese 'seguro' puede valer los 120 bps de yield que se sacrifican",
+            "Que ante un escenario de estrés de deuda, la ley NY ofrece mayor protección legal al bonista; para un horizonte largo donde ese escenario no es descartable, ese 'seguro' puede valer los 120 bps de TIR que se sacrifican",
             "Que los Globales siempre tienen más liquidez que los Bonares",
             "No hay ninguna razón válida para elegir un bono que rinde menos"
           ],
@@ -530,7 +599,7 @@ const ESCENARIOS = {
         {
           tipo: "abierta",
           enunciado: "Un cliente te pregunta: 'Me explicaste que los GDs son más seguros que los ALs, entonces ¿para qué existen los Bonares? ¿Quién los compra?' Redactá una respuesta de 4-5 líneas.",
-          feedback: "Los Bonares existen porque tienen atributos propios que los hacen atractivos para ciertos inversores: rinden más que los Globales de plazo similar, son los soberanos más líquidos del mercado local (especialmente el AL30), y para inversores que ya asumen el riesgo soberano argentino (o que tienen visión de que ese riesgo es bajo en el horizonte de inversión), el extra de yield puede compensar la diferencia de jurisdicción. Los bancos y fondos locales suelen tener Bonares por liquidez; los inversores institucionales internacionales suelen preferir los GDs. No hay un 'mejor' absoluto: depende del horizonte, del perfil de riesgo y de qué tan alta es la convicción sobre la estabilidad del soberano."
+          feedback: "Los Bonares existen porque tienen atributos propios que los hacen atractivos para ciertos inversores: rinden más que los Globales de plazo similar, son los soberanos más líquidos del mercado local (especialmente el AL30), y para inversores que ya asumen el riesgo soberano argentino (o que tienen visión de que ese riesgo es bajo en el horizonte de inversión), el extra de TIR puede compensar la diferencia de jurisdicción. Los bancos y fondos locales suelen tener Bonares por liquidez; los inversores institucionales internacionales suelen preferir los GDs. No hay un 'mejor' absoluto: depende del horizonte, del perfil de riesgo y de qué tan alta es la convicción sobre la estabilidad del soberano."
         }
       ]
     },
@@ -539,7 +608,7 @@ const ESCENARIOS = {
       id: "curva-05",
       titulo: "Dollar-linked soberanos — leyendo la curva de devaluación implícita",
       dificultad: "avanzada",
-      consigna: "Los bonos dollar-linked ajustan por tipo de cambio oficial. Su yield implica cuánta devaluación adicional (o menor) espera el mercado. Interpretá la curva.",
+      consigna: "Los bonos dollar-linked ajustan por tipo de cambio oficial. Su TIR implica cuánta devaluación adicional (o menor) espera el mercado. Interpretá la curva.",
       curva: {
         xLabel: "Días al vencimiento",
         yLabel: "Yield (%)",
@@ -561,20 +630,20 @@ const ESCENARIOS = {
       preguntas: [
         {
           tipo: "mc",
-          enunciado: "El TZV26 (vence en 18 días) tiene yield de 7,78%, mientras los bonos de plazo más largo están en la zona de 2,5-7%. ¿Qué explicación es más razonable para ese yield tan alto en el bono más corto?",
+          enunciado: "El TZV26 (vence en 18 días) tiene TIR de 7,78%, mientras los bonos de plazo más largo están en la zona de 2,5-7%. ¿Qué explicación es más razonable para esa TIR tan alta en el bono más corto?",
           opciones: [
             "Que el mercado espera una devaluación inminente en los próximos 18 días y está exigiendo compensación",
-            "Que es un error de cálculo porque un bono tan corto no debería tener yield",
-            "Que todos los dollar-linked siempre tienen yields muy diferentes entre sí sin razón",
+            "Que es un error de cálculo porque un bono tan corto no debería tener TIR",
+            "Que todos los dollar-linked siempre tienen TIR muy diferentes entre sí sin razón",
             "Que el bono vence en dólares y los demás en pesos"
           ],
           correcta: 0,
-          feedback: "Exactamente. En bonos de muy corto plazo, pequeños movimientos de precio se amplifican mucho en términos anualizados. Un yield de 7,78% en 18 días puede reflejar que el mercado está priceando algún riesgo de evento puntual (una devaluación o un ajuste del tipo de cambio) en ese ventana corta, o simplemente poca liquidez y spread amplio. Es el tramo que más 'ruido' tiene en la curva y el que menos se puede leer de forma literal sin entender el contexto específico."
+          feedback: "Exactamente. En bonos de muy corto plazo, pequeños movimientos de precio se amplifican mucho en términos anualizados. Un TIR de 7,78% en 18 días puede reflejar que el mercado está priceando algún riesgo de evento puntual (una devaluación o un ajuste del tipo de cambio) en ese ventana corta, o simplemente poca liquidez y spread amplio. Es el tramo que más 'ruido' tiene en la curva y el que menos se puede leer de forma literal sin entender el contexto específico."
         },
         {
           tipo: "abierta",
-          enunciado: "Un cliente quiere cobertura contra devaluación con un horizonte de 12 meses. Mirando esta curva, ¿qué tramo le recomendarías y qué implica un yield de 2,73-2,90% en esos bonos en términos de expectativas del mercado?",
-          feedback: "Para 12 meses, la zona más relevante es D31M7 o TZV27 (yields ~2,73-2,90%). Que el yield sea positivo y en ese rango implica que para que el inversor 'empate' con tener dólares directos, el tipo de cambio oficial tiene que devaluar menos de ~2,73-2,90% anual más de lo que el bono ya descuenta. En términos prácticos: si el mercado espera que el tipo de cambio oficial siga siendo relativamente estable (o con ajustes graduales pequeños), un yield de ~2,80% puede ser razonable; si el cliente espera una devaluación más fuerte que lo que implica ese yield, el bono puede resultar atractivo. Para comunicarle al cliente: 'Este bono ya descuenta que el dólar oficial va a subir un poco; si vos creés que va a subir más de lo que el mercado espera, te conviene; si creés que el tipo de cambio se mantiene estable, tal vez no necesitás esta cobertura en particular.'"
+          enunciado: "Un cliente quiere cobertura contra devaluación con un horizonte de 12 meses. Mirando esta curva, ¿qué tramo le recomendarías y qué implica una TIR de 2,73-2,90% en esos bonos en términos de expectativas del mercado?",
+          feedback: "Para 12 meses, la zona más relevante es D31M7 o TZV27 (TIR ~2,73-2,90%). Que la TIR sea positivo y en ese rango implica que para que el inversor 'empate' con tener dólares directos, el tipo de cambio oficial tiene que devaluar menos de ~2,73-2,90% anual más de lo que el bono ya descuenta. En términos prácticos: si el mercado espera que el tipo de cambio oficial siga siendo relativamente estable (o con ajustes graduales pequeños), una TIR de ~2,80% puede ser razonable; si el cliente espera una devaluación más fuerte que lo que implica esa TIR, el bono puede resultar atractivo. Para comunicarle al cliente: 'Este bono ya descuenta que el dólar oficial va a subir un poco; si vos creés que va a subir más de lo que el mercado espera, te conviene; si creés que el tipo de cambio se mantiene estable, tal vez no necesitás esta cobertura en particular.'"
         }
       ]
     }
@@ -813,7 +882,7 @@ const ESCENARIOS = {
             "Porque la TIR del bid siempre es la TIR real que va a cobrar el inversor"
           ],
           correcta: 1,
-          feedback: "El spread en TIR contextualiza el costo de entrada. Si tu tesis es que este bono vale ~7.15% de yield y el ask está en 7.08%, el 'error de entrada' es solo 7 bps — muy razonable. Si el ask estuviera en 6.80%, pagarías 35 bps de más sobre tu valuación, lo que requeriría más convicción para entrar. Mirar el spread en TIR también te da una referencia: un spread de 14 bps en un bono con duration 2.56 equivale aproximadamente a 14 × 2.56 / 100 ≈ 0.36% de precio — eso es lo que 'perdés' de entrada y desde lo que empezás tu carry."
+          feedback: "El spread en TIR contextualiza el costo de entrada. Si tu tesis es que este bono vale ~7.15% de TIR y el ask está en 7.08%, el 'error de entrada' es solo 7 bps — muy razonable. Si el ask estuviera en 6.80%, pagarías 35 bps de más sobre tu valuación, lo que requeriría más convicción para entrar. Mirar el spread en TIR también te da una referencia: un spread de 14 bps en un bono con duration 2.56 equivale aproximadamente a 14 × 2.56 / 100 ≈ 0.36% de precio — eso es lo que 'perdés' de entrada y desde lo que empezás tu carry."
         },
         {
           tipo: "abierta",
@@ -825,8 +894,7 @@ const ESCENARIOS = {
   ],
 
   /* ---- ROTACIÓN ---- */
-  rotacion: [
-    {
+  rotacion: [    {
       id: "rot-01",
       titulo: "AL30 vs GD30 — ¿vale el spread de ley?",
       dificultad: "intermedia",
@@ -837,7 +905,7 @@ const ESCENARIOS = {
           nombre: "AL30 (Bonar 30)",
           tag: "Posición actual",
           datos: [
-            { label: "Yield", valor: "7.18%", clase: "" },
+            { label: "TIR", valor: "7.18%", clase: "" },
             { label: "Duration modificada", valor: "1.72", clase: "" },
             { label: "Ley", valor: "Argentina", clase: "atencion" },
             { label: "Liquidez", valor: "Muy alta (mayor volumen del mercado)", clase: "bueno" },
@@ -848,7 +916,7 @@ const ESCENARIOS = {
           nombre: "GD30 (Global 30)",
           tag: "Bono destino",
           datos: [
-            { label: "Yield", valor: "5.98%", clase: "" },
+            { label: "TIR", valor: "5.98%", clase: "" },
             { label: "Duration modificada", valor: "1.55", clase: "" },
             { label: "Ley", valor: "Nueva York", clase: "bueno" },
             { label: "Liquidez", valor: "Alta", clase: "bueno" },
@@ -862,7 +930,7 @@ const ESCENARIOS = {
           enunciado: "El cliente argumenta: 'Con el riesgo país cayendo y la mejora de rating, el GD30 va a subir más que el AL30 porque tiene mejor ley.' ¿Es correcto ese razonamiento?",
           opciones: [
             "Sí, siempre que el riesgo país baja los GDs suben más que los ALs sin excepción",
-            "Parcialmente: en compresiones de riesgo país fuertes, ambos se benefician, pero los GDs suelen comprimir algo más porque el spread de ley se estrecha cuando el mercado percibe menor riesgo sistémico. Sin embargo, la diferencia de duration es pequeña acá, y el AL30 tiene más yield de carry. No es una regla automática",
+            "Parcialmente: en compresiones de riesgo país fuertes, ambos se benefician, pero los GDs suelen comprimir algo más porque el spread de ley se estrecha cuando el mercado percibe menor riesgo sistémico. Sin embargo, la diferencia de duration es pequeña acá, y el AL30 tiene más TIR de carry. No es una regla automática",
             "No, los ALs siempre suben más que los GDs en contextos de mejora de rating",
             "La ley no tiene ningún efecto sobre cómo responden los precios a cambios de riesgo país"
           ],
@@ -871,10 +939,10 @@ const ESCENARIOS = {
         },
         {
           tipo: "mc",
-          enunciado: "¿Cuál es el costo explícito de rotar del AL30 al GD30 en términos de yield anual?",
+          enunciado: "¿Cuál es el costo explícito de rotar del AL30 al GD30 en términos de TIR anual?",
           opciones: [
-            "No hay ningún costo, el yield no cambia al rotar",
-            "~120 bps menos de yield anual (de 7.18% a 5.98%), que a lo largo de 2 años de horizonte son ~240 bps de carry resignado a cambio de la protección jurídica del GD30",
+            "No hay ningún costo, la TIR no cambia al rotar",
+            "~120 bps menos de TIR anual (de 7.18% a 5.98%), que a lo largo de 2 años de horizonte son ~240 bps de carry resignado a cambio de la protección jurídica del GD30",
             "El costo es exactamente la diferencia de precio entre ambos bonos",
             "Es imposible calcularlo sin conocer el precio exacto de cada operación"
           ],
@@ -884,7 +952,7 @@ const ESCENARIOS = {
         {
           tipo: "abierta",
           enunciado: "Redactá en 4-5 líneas tu recomendación final sobre si hacer o no esta rotación, incluyendo el argumento principal a favor y el principal en contra.",
-          feedback: "Argumento a favor de rotar al GD30: en un contexto de compresión de riesgo país y posible nueva mejora de Moody's, el spread ley puede seguir cerrándose, lo que beneficiaría relativamente más al GD30. Además, para un cliente con horizonte largo, la protección jurídica tiene valor genuino. Argumento en contra: se resignan ~120 bps de yield por año (carry), la duration del AL30 es ligeramente mayor (mejor posicionado si hay más compresión de spread), y la liquidez del AL30 es superior. Conclusión razonable: si el cliente ya tiene suficiente exposición a Bonares y quiere diversificar jurisdicción, la rotación parcial tiene sentido; si el objetivo es maximizar carry en el corto plazo, mantenerse en AL30 es más razonable."
+          feedback: "Argumento a favor de rotar al GD30: en un contexto de compresión de riesgo país y posible nueva mejora de Moody's, el spread ley puede seguir cerrándose, lo que beneficiaría relativamente más al GD30. Además, para un cliente con horizonte largo, la protección jurídica tiene valor genuino. Argumento en contra: se resignan ~120 bps de TIR por año (carry), la duration del AL30 es ligeramente mayor (mejor posicionado si hay más compresión de spread), y la liquidez del AL30 es superior. Conclusión razonable: si el cliente ya tiene suficiente exposición a Bonares y quiere diversificar jurisdicción, la rotación parcial tiene sentido; si el objetivo es maximizar carry en el corto plazo, mantenerse en AL30 es más razonable."
         }
       ]
     },
@@ -956,14 +1024,14 @@ const ESCENARIOS = {
       id: "rot-03",
       titulo: "ON corporativa vs soberano — ¿el spread compensa el riesgo?",
       dificultad: "intermedia",
-      consigna: "Un cliente tiene GD30 (soberano, 5.98%) y está mirando una ON corporativa de una empresa exportadora argentina con yield más alto. Evaluá si el spread corporativo tiene sentido.",
+      consigna: "Un cliente tiene GD30 (soberano, 5.98%) y está mirando una ON corporativa de una empresa exportadora argentina con TIR más alto. Evaluá si el spread corporativo tiene sentido.",
       contexto: "El contexto macroeconómico es favorable para exportadoras: dólar agro estabilizado, precio del crudo en niveles moderados. La empresa tiene deuda/EBITDA de 2.1x.",
       instrumentos: [
         {
           nombre: "GD30 (Global 30)",
           tag: "Posición actual",
           datos: [
-            { label: "Yield", valor: "5.98%", clase: "" },
+            { label: "TIR", valor: "5.98%", clase: "" },
             { label: "Duration modificada", valor: "1.55", clase: "" },
             { label: "Emisor", valor: "Soberano argentino", clase: "" },
             { label: "Ley", valor: "Nueva York", clase: "bueno" },
@@ -974,7 +1042,7 @@ const ESCENARIOS = {
           nombre: "MGCND (Pampa Energía ON 2028)",
           tag: "Bono destino",
           datos: [
-            { label: "Yield", valor: "4.70%", clase: "" },
+            { label: "TIR", valor: "4.70%", clase: "" },
             { label: "Duration modificada", valor: "1.07", clase: "" },
             { label: "Emisor", valor: "Pampa Energía — exportadora de gas/electricidad", clase: "" },
             { label: "Deuda neta / EBITDA", valor: "2.1x (nivel moderado)", clase: "bueno" },
@@ -1009,8 +1077,8 @@ const ESCENARIOS = {
         },
         {
           tipo: "abierta",
-          enunciado: "El cliente te pregunta: '¿Para qué me sirve ganar menos yield con el corporativo?' Redactá en 4-5 líneas los argumentos a favor del MGCND para un cliente con horizonte hasta vencimiento (2028) y sin necesidad de liquidez.",
-          feedback: "Argumentos válidos para el MGCND con ese perfil: (1) duration menor (1.07 vs 1.55) — el MGCND es menos sensible a cambios de spread soberano, lo que reduce la volatilidad de precio en el camino; (2) el riesgo de crédito percibido puede ser menor que el soberano para algunos inversores (empresa exportadora con fundamentos propios, menos expuesta al riesgo fiscal del Estado); (3) menor yield no significa peor inversión en términos ajustados por riesgo — si el riesgo real de no pago es menor, el rendimiento ajustado puede ser superior; (4) para diversificar la cartera de crédito: tener solo soberano y sumar un corporativo exportador reduce la concentración en un solo emisor. La clave es comunicar que la comparación no es solo '4.70% vs 5.98%' sino '¿qué riesgo estoy cobrando en cada caso?'"
+          enunciado: "El cliente te pregunta: '¿Para qué me sirve ganar menos TIR con el corporativo?' Redactá en 4-5 líneas los argumentos a favor del MGCND para un cliente con horizonte hasta vencimiento (2028) y sin necesidad de liquidez.",
+          feedback: "Argumentos válidos para el MGCND con ese perfil: (1) duration menor (1.07 vs 1.55) — el MGCND es menos sensible a cambios de spread soberano, lo que reduce la volatilidad de precio en el camino; (2) el riesgo de crédito percibido puede ser menor que el soberano para algunos inversores (empresa exportadora con fundamentos propios, menos expuesta al riesgo fiscal del Estado); (3) menor TIR no significa peor inversión en términos ajustados por riesgo — si el riesgo real de no pago es menor, el rendimiento ajustado puede ser superior; (4) para diversificar la cartera de crédito: tener solo soberano y sumar un corporativo exportador reduce la concentración en un solo emisor. La clave es comunicar que la comparación no es solo '4.70% vs 5.98%' sino '¿qué riesgo estoy cobrando en cada caso?'"
         }
       ]
     },
@@ -1142,6 +1210,394 @@ const ESCENARIOS = {
 };
 
 /* ============================================================
+   ESCENARIOS ÁRBOL DE DECISIÓN
+   ============================================================ */
+const ESCENARIOS_ARBOL = [
+  {
+    id: "arbol-01",
+    titulo: "El BOPREAL rinde menos del 4% — ¿me quedo o salgo?",
+    dificultad: "intermedia",
+    contexto: `El BOPREAL (Bono del BCRA en dólares) fue emitido por el gobierno de Milei en 2024 para que importadores pudieran cancelar deudas comerciales. Su riesgo crediticio se percibe levemente por debajo del de los bonos soberanos (ALs y GDs), ya que el emisor es el Banco Central, no el Tesoro. En las últimas semanas subió mucho de precio, lo cual comprimió su rendimiento.`,
+    tabla: {
+      titulo: "BOPREALs en cartera del cliente — datos del 12/06/2026",
+      columnas: ["Ticker", "Vencimiento", "Precio", "TIR anual", "Duration"],
+      filas: [
+        ["BPC7D", "Oct 2027", "101.60", "4.15%", "1.31"],
+        ["BPD7D", "Oct 2027", "101.40", "4.33%", "1.31"],
+        ["BPB8D", "Oct 2028", "91.85", "7.07%", "2.21"],
+        ["BPA8D", "Oct 2028", "92.10", "6.94%", "2.21"]
+      ],
+      destacada: [0, 1],
+      nota: "El cliente tiene BPC7D y BPD7D (Oct 2027). Con TIR debajo del 4.5%, el rendimiento es muy bajo para el riesgo que implica tener un instrumento argentino en dólares."
+    },
+    pasos: [
+      {
+        titulo: "Paso 1 — ¿Qué buscás al moverte?",
+        instruccion: "Antes de elegir a dónde ir, hay que entender qué problema resolvés moviéndote. Marcá todas las afirmaciones que son válidas como motivación para salir del BOPREAL 2027:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Busco más rendimiento: el BOPREAL 2027 al 4.15% es muy bajo para el riesgo que implica tener un bono argentino en dólares.", correcta: true },
+          { texto: "El BOPREAL 2027 está en default, así que me tengo que ir sí o sí.", correcta: false, trampa: "El BOPREAL no está en default. El problema es que su rendimiento es bajo, no que haya incumplimiento de pagos." },
+          { texto: "Busco asegurar ganancias: el bono subió mucho de precio, y vender ahora me permite 'cobrar' esa ganancia de capital y reinvertir en algo con mejor relación riesgo-retorno.", correcta: true },
+          { texto: "El BOPREAL es más riesgoso que los bonos soberanos, entonces siempre conviene salirse.", correcta: false, trampa: "Al revés: el BOPREAL se percibe levemente menos riesgoso que los soberanos, porque el emisor es el BCRA. El problema no es el riesgo — es el rendimiento bajo." }
+        ]
+      },
+      {
+        titulo: "Paso 2 — ¿A dónde me voy?",
+        instruccion: "Ahora evaluás las opciones de destino. Leé cada afirmación y marcá todas las que son correctas:",
+        tipo: "multi",
+        opciones: [
+          { texto: "AL30 (TIR 7.18%, duration 1.72): rinde más que el BOPREAL, pero tenés más riesgo soberano — el emisor es el Tesoro argentino, que históricamente tiene más episodios de default que el BCRA.", correcta: true },
+          { texto: "AL30 es más seguro que el BOPREAL porque es más conocido y tiene más volumen operado.", correcta: false, trampa: "Confundís liquidez con seguridad. El AL30 tiene más volumen (es más fácil de comprar y vender), pero eso no lo hace más seguro en términos de riesgo de crédito. El BOPREAL es del BCRA; el AL30 es del Tesoro." },
+          { texto: "GD30 (TIR 5.98%, duration 1.87): rinde más que el BOPREAL, tiene protección de ley Nueva York, pero menos TIR que el AL30 y también más riesgo soberano que el BOPREAL.", correcta: true },
+          { texto: "AO27 (soberano corto, duration ~1.1): puede ser una alternativa para no estirar mucho el plazo, con algo más de rendimiento que el BOPREAL 2027, aunque también con riesgo soberano.", correcta: true },
+          { texto: "BOPREAL 2028 (BPB8D, TIR 7.07%, duration 2.21): es del mismo emisor pero más largo — sube el rendimiento a cambio de más tiempo expuesta y más sensibilidad al precio si cambian las tasas.", correcta: true },
+          { texto: "ON de Celulosa Argentina (empresa en proceso de default): rinde mucho más que el BOPREAL, así que compensa el riesgo.", correcta: false, trampa: "Un rendimiento muy alto en una empresa que está en default no 'compensa el riesgo' — refleja que el mercado ya está priceando que no van a pagar todo. No es lo mismo riesgo soberano argentino que riesgo de una empresa en cesación de pagos." }
+        ]
+      },
+      {
+        titulo: "Paso 3 — ¿Qué resignás al moverte?",
+        instruccion: "Cada movimiento implica un trade-off. Marcá todas las afirmaciones correctas sobre lo que resignás dependiendo del destino elegido:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Si voy al AL30: gano más TIR, pero acepto más riesgo soberano. Si Argentina tiene un evento de crédito, el AL30 va a sufrir más que el BOPREAL.", correcta: true },
+          { texto: "Si voy al GD30: tengo protección de ley NY, pero resigno TIR respecto al AL30. Estoy 'pagando' esa protección jurídica con menos rendimiento.", correcta: true },
+          { texto: "Si voy a un bono más largo (GD35, duration 5.34): gano mucho más TIR, pero si las tasas o el spread soberano suben, el precio de ese bono va a caer mucho más que el del BOPREAL 2027.", correcta: true },
+          { texto: "Si voy a cualquier otro activo argentino en dólares, el riesgo baja siempre respecto al BOPREAL.", correcta: false, trampa: "Falso. El BOPREAL es del BCRA, que en general se percibe como mejor crédito que el Tesoro. Moverse al AL30 o GD30 implica subir el riesgo de emisor, no bajarlo." },
+          { texto: "Si me quedo en el BOPREAL: no resigno nada en términos de riesgo, pero resigno rendimiento — estoy 'dejando plata sobre la mesa' respecto a otras alternativas con el mismo o poco más de riesgo.", correcta: true }
+        ]
+      }
+    ]
+  },
+
+  {
+    id: "arbol-02",
+    titulo: "El riesgo país cayó a 400 bps — los bonos subieron mucho, ¿qué hago?",
+    dificultad: "avanzada",
+    contexto: `El riesgo país argentino comprimió fuertemente y está en torno a 400 puntos básicos (bps), un nivel muy bajo para Argentina históricamente. Los bonos soberanos hard dollar subieron mucho: el GD30 pasó de 45 a 66 USD en pocos meses. Un cliente que compró hace 6 meses está con una ganancia importante y pregunta: "¿Me quedo o tomo ganancias?"`,
+    tabla: {
+      titulo: "Soberanos hard dollar — datos actuales",
+      columnas: ["Bono", "Precio actual", "TIR", "Duration", "Precio hace 6m (aprox.)"],
+      filas: [
+        ["GD30", "66.00", "5.98%", "1.87", "~45"],
+        ["GD35", "83.80", "8.49%", "5.34", "~58"],
+        ["GD41", "78.08", "8.63%", "5.86", "~52"],
+        ["GD46", "75.14", "8.40%", "6.12", "~50"]
+      ],
+      destacada: [],
+      nota: "El GD30 ya subió ~47% desde mínimos. La pregunta no es si subió, sino cuánto más puede subir desde acá."
+    },
+    pasos: [
+      {
+        titulo: "Paso 1 — ¿Qué pregunta me tengo que hacer primero?",
+        instruccion: "Antes de decidir si quedarse o salir, hay una pregunta central que un asesor tiene que hacerse. Marcá todas las afirmaciones correctas:",
+        tipo: "multi",
+        opciones: [
+          { texto: "La pregunta correcta no es '¿cuánto subió?' sino '¿cuánto más puede subir desde el precio de hoy?' Un bono que ya subió mucho puede seguir subiendo o puede haber llegado a un nivel justo.", correcta: true },
+          { texto: "Si el bono subió 47%, hay que vender sí o sí, porque lo que sube siempre baja.", correcta: false, trampa: "Eso es una superstición, no un análisis. Los precios pueden seguir subiendo si los fundamentos lo justifican. La pregunta es si el precio actual refleja adecuadamente el valor o si ya está 'caro'." },
+          { texto: "Con el riesgo país en 400 bps, hay que comparar ese nivel con el de otros países emergentes similares para entender si hay margen adicional de compresión.", correcta: true },
+          { texto: "El precio pasado (cuánto pagué) es irrelevante para decidir si quedarme o salir hoy — lo que importa es si el precio actual justifica mantener la posición hacia adelante.", correcta: true }
+        ]
+      },
+      {
+        titulo: "Paso 2 — ¿Qué implica quedarse vs. salir?",
+        instruccion: "Marcá todas las afirmaciones correctas sobre el trade-off de esta decisión:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Quedarse en el GD30 (TIR 5.98%, duration 1.87): el bono tiene poca duration, así que si el riesgo país sube un poco, la caída de precio es moderada. Pero la TIR es bajo para Argentina — estás cobrando poco carry.", correcta: true },
+          { texto: "Rotar al GD35 o GD41 (TIR ~8.5%, duration 5-6): ganás mucho más carry, pero si el riesgo país rebota, un bono de duration 6 puede caer 4-6 veces más de precio que el GD30.", correcta: true },
+          { texto: "Tomar ganancias y salir del todo tiene sentido si el cliente necesita el dinero pronto o si tiene convicción de que el riesgo país va a subir desde acá.", correcta: true },
+          { texto: "Salir del GD30 y entrar al AL30 (TIR 7.18%) es moverse a un activo más seguro con más rendimiento.", correcta: false, trampa: "El AL30 tiene más TIR que el GD30 pero más riesgo jurídico (ley argentina). No es 'más seguro con más rendimiento' — es más riesgo con más rendimiento. Siempre hay un trade-off." },
+          { texto: "Si el cliente tiene horizonte largo y no necesita el dinero, una caída transitoria de precio no es una pérdida real a menos que venda.", correcta: true }
+        ]
+      },
+      {
+        titulo: "Paso 3 — ¿Cómo se lo explicás al cliente?",
+        instruccion: "El cliente quiere una respuesta clara. Marcá todas las afirmaciones que forman parte de una buena comunicación en esta situación:",
+        tipo: "multi",
+        opciones: [
+          { texto: "'Los bonos subieron mucho porque el mercado percibe menos riesgo de que Argentina no pague. Desde este nivel, el rendimiento que te queda por delante es más bajo que antes — ya 'cobraste' gran parte de la ganancia que había.'", correcta: true },
+          { texto: "'El mercado siempre tiene razón, así que si el bono está en 66 es porque ese es su valor justo y no puede bajar.'", correcta: false, trampa: "El mercado puede equivocarse y los precios pueden ir en cualquier dirección. Afirmar que 'siempre tiene razón' es peligroso y no es verdad." },
+          { texto: "'Podemos tomar ganancias parciales: vender una parte para asegurar lo ganado y mantener otra parte por si el rally continúa. Así no apostamos todo a una sola dirección.'", correcta: true },
+          { texto: "'Si te quedás, el riesgo ahora no es el mismo que cuando compraste a 45: entonces podías ganar mucho con poco riesgo relativo; ahora el bono está más caro y la relación riesgo-retorno es menos atractiva.'", correcta: true },
+          { texto: "'Vendamos todo hoy, porque con el riesgo país en 400 bps Argentina ya llegó a su techo y solo puede empeorar.'", correcta: false, trampa: "Eso es una predicción disfrazada de análisis. Nadie puede saber cuál es el 'techo' del riesgo país. La humildad epistémica forma parte del asesoramiento profesional." }
+        ]
+      }
+    ]
+  },
+
+  {
+    id: "arbol-03",
+    titulo: "Un cliente conservador quiere 'algo en dólares que no baje'",
+    dificultad: "básica",
+    contexto: `Una cliente de 62 años, jubilada, tiene USD 50.000 en efectivo. Viene de perder plata en el pasado con un plazo fijo en pesos que "no le rindió nada contra la inflación". Su pedido es claro: "Quiero dólares que no bajen." Tu trabajo es entender qué puede y qué no puede ofrecerle, y comunicarlo con honestidad.`,
+    tabla: {
+      titulo: "Alternativas posibles en dólares",
+      columnas: ["Instrumento", "TIR aprox.", "Riesgo principal", "¿'No puede bajar'?"],
+      filas: [
+        ["Dólar billete / cuenta bancaria", "0%", "Inflación en USD", "Sí, no fluctúa"],
+        ["BOPREAL 2027 (BPC7D)", "4.15%", "Crédito BCRA + precio de mercado", "No — el precio fluctúa"],
+        ["GD30 (Global 30)", "5.98%", "Crédito soberano + precio de mercado", "No — el precio fluctúa"],
+        ["ON YPF 2029 (ley NY)", "~7%", "Crédito corporativo YPF", "No — el precio fluctúa"],
+        ["ON Celulosa Argentina", ">15%", "Empresa en proceso de default", "No — alto riesgo de no cobrar"]
+      ],
+      destacada: [3],
+      nota: "La única alternativa que 'no baja' es el dólar billete, pero tampoco rinde nada. Todo lo demás tiene algún tipo de riesgo de precio o de crédito."
+    },
+    pasos: [
+      {
+        titulo: "Paso 1 — ¿Qué le estás diciendo cuando decís que 'no baja'?",
+        instruccion: "La cliente usó esas palabras, pero puede estar hablando de cosas distintas. Marcá todas las afirmaciones correctas sobre qué puede querer decir:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Puede querer decir que no quiere ver el valor de su inversión en números rojos en la pantalla (volatilidad de precio).", correcta: true },
+          { texto: "Puede querer decir que no quiere perder el capital que puso — que al final del camino le devuelvan al menos lo que invirtió.", correcta: true },
+          { texto: "Puede querer decir que no quiere riesgo de que la empresa o el país no pague (riesgo de crédito).", correcta: true },
+          { texto: "Lo que pide es perfectamente posible con cualquier bono en dólares, ya que todos están garantizados por el Estado.", correcta: false, trampa: "Los bonos no están 'garantizados por el Estado' — el Estado argentino puede y en el pasado ha incumplido sus obligaciones. Y los bonos corporativos tienen el riesgo de la empresa, no del Estado." }
+        ]
+      },
+      {
+        titulo: "Paso 2 — ¿Cuál de estas opciones le ofrecerías y por qué?",
+        instruccion: "Evaluá las alternativas y marcá todas las afirmaciones correctas:",
+        tipo: "multi",
+        opciones: [
+          { texto: "El dólar billete 'no baja' en términos nominales, pero pierde poder adquisitivo con la inflación en dólares. Para alguien que no quiere ningún riesgo, puede ser parte de la solución.", correcta: true },
+          { texto: "El BOPREAL 2027 (4.15%, duration corta) puede ser una opción razonable si la cliente acepta que el precio puede fluctuar levemente en el camino, pero el capital probablemente se devuelve al vencimiento si el BCRA no defaultea.", correcta: true },
+          { texto: "La ON de YPF 2029 (~7%) es una buena opción porque YPF es empresa del Estado y entonces tiene garantía implícita del gobierno.", correcta: false, trampa: "YPF es una empresa parcialmente estatal que cotiza en bolsa — no tiene garantía explícita del gobierno nacional. Su riesgo de crédito es el de la empresa, no del soberano." },
+          { texto: "La ON de Celulosa Argentina (>15% de TIR) es perfecta para esta cliente porque el rendimiento alto compensa el riesgo.", correcta: false, trampa: "Una TIR tan alta en una empresa en default significa que el mercado duda de que vayan a pagar todo. Para una cliente conservadora de 62 años que quiere preservar capital, esto es exactamente lo contrario de lo que necesita." },
+          { texto: "Lo más honesto es explicarle que en el mundo real, cualquier instrumento en dólares que rinda más que cero tiene algún riesgo de que el precio fluctúe o de que el emisor no pague. La pregunta es cuánto riesgo está dispuesta a aceptar, no si existe o no.", correcta: true }
+        ]
+      },
+      {
+        titulo: "Paso 3 — ¿Cómo comunicás que ningún bono 'garantiza que no baje'?",
+        instruccion: "Marcá todas las formas correctas de comunicar esta realidad sin perder la confianza de la cliente:",
+        tipo: "multi",
+        opciones: [
+          { texto: "'No existe ningún instrumento en dólares que te garantice que el precio no va a bajar nunca. Lo que sí puedo ofrecerte son instrumentos de bajo riesgo, corta duración, donde la probabilidad de que cobrés al vencimiento es alta, aunque el precio del día a día puede variar un poco.'", correcta: true },
+          { texto: "Evitar decirle que el precio puede bajar para no asustarla y cerrar la operación.", correcta: false, trampa: "Omitir información relevante sobre el riesgo es una mala práctica de asesoramiento. Si el cliente no entiende el riesgo que está tomando, la relación se va a romper en el primer momento de volatilidad." },
+          { texto: "'Lo que podemos hacer es separar el objetivo: una parte en dólar billete o algo de muy corto plazo que no fluctúe, y otra parte en un instrumento de bajo riesgo como el BOPREAL corto, que rinde algo más. Así no ponemos todo en una sola canasta.'", correcta: true },
+          { texto: "'Si querés que no baje nunca, la única opción son los dólares en el colchón — pero ahí el problema es otro: la inflación en dólares te va comiendo el poder adquisitivo de a poco.'", correcta: true },
+          { texto: "'Como no puedo garantizarte nada, mejor no invertir nada y dejarlo todo en efectivo.'", correcta: false, trampa: "Eso no es asesoramiento — es abandonar al cliente. El trabajo del asesor es encontrar la mejor opción posible dentro del perfil de riesgo real del cliente, no rendirse ante la incertidumbre." }
+        ]
+      }
+    ]
+  },
+
+  {
+    id: "arbol-04",
+    titulo: "Tengo plata parada 30 días en pesos — ¿caución, LECAP o money market?",
+    dificultad: "basica",
+    contexto: `Una clienta tiene $500.000 pesos que no va a necesitar por aproximadamente 30 días. No quiere correr riesgos y solo quiere que "no pierdan contra la inflación o el tiempo". Hay tres opciones que le podés ofrecer, y las tres parecen similares porque "son todas cortas y en pesos" — pero tienen diferencias importantes que cambian cuál conviene según la situación.`,
+    tabla: {
+      titulo: "Las tres opciones comparadas",
+      columnas: ["Opción", "Qué es", "Plazo", "Tasa aproximada (jun-2026)", "Liquidez"],
+      filas: [
+        ["Caución bursátil", "Préstamo de muy corto plazo garantizado con activos financieros, dentro del mercado de capitales", "1 a 7 días (renovable)", "~20% anual (TNA)", "Al vencimiento — no se puede salir antes"],
+        ["LECAP (30 días)", "Letra del Tesoro a tasa fija en pesos, que cotiza en el mercado", "~30 días", "~1.80% mensual (~21.6% anual)", "Se puede vender antes en el mercado, pero el precio puede variar"],
+        ["FCI Money Market", "Fondo de inversión que agrupa plazos fijos, cauciones y letras de muy corto plazo, gestionado por profesionales", "Puede rescatarse cualquier día (T+0)", "~20-21% anual, variable según el fondo", "Alta — el rescate acredita el mismo día hábil"]
+      ],
+      destacada: [],
+      nota: "Las tres rinden parecido, pero difieren en liquidez, riesgo y flexibilidad. Elegir bien depende de cuándo la clienta va a necesitar la plata de verdad."
+    },
+    pasos: [
+      {
+        titulo: "Paso 1 — ¿Qué es lo más importante para esta clienta?",
+        instruccion: "Antes de recomendar, tenés que entender qué le importa más. Marcá todas las afirmaciones correctas sobre esta situación:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Lo más importante acá no es la tasa (las tres rinden parecido) sino la liquidez: si la clienta necesita la plata antes de los 30 días, no todas las opciones le permiten salir igual de fácil.", correcta: true },
+          { texto: "Siempre hay que elegir la que más rinde, sin importar nada más.", correcta: false, trampa: "Para plazos tan cortos y diferencias tan pequeñas de tasa, la liquidez y la flexibilidad suelen pesar más que unos pocos puntos de diferencia de rendimiento." },
+          { texto: "Si la clienta dice '30 días' pero en realidad no está segura de cuándo va a necesitar la plata, eso cambia la recomendación — conviene preguntarle antes de decidir.", correcta: true },
+          { texto: "Como las tres opciones son 'conservadoras', no hace falta explicar nada — cualquiera sirve igual.", correcta: false, trampa: "Las tres son conservadoras pero no son iguales. Una clienta que rescata una caución antes de tiempo, o que vende una LECAP en un mal momento, puede obtener menos de lo esperado. Explicar las diferencias es parte del trabajo del asesor." }
+        ]
+      },
+      {
+        titulo: "Paso 2 — ¿Qué tiene de especial cada opción?",
+        instruccion: "Marcá todas las afirmaciones que son correctas sobre estas tres opciones:",
+        tipo: "multi",
+        opciones: [
+          { texto: "La caución tiene la tasa más clara y predecible: sabés exactamente cuánto vas a ganar al inicio, y ese rendimiento está garantizado si esperás al vencimiento. La contra: si necesitás salir antes, no podés — tenés que esperar.", correcta: true },
+          { texto: "La LECAP puede venderse antes del vencimiento en el mercado, pero su precio puede bajar un poco si las tasas suben en el medio. Para 30 días el riesgo es bajo, pero existe.", correcta: true },
+          { texto: "El FCI Money Market es la opción más flexible: se puede rescatar cualquier día hábil y el dinero llega el mismo día. La contra: la tasa no está fija de antemano — varía según el mercado día a día.", correcta: true },
+          { texto: "El FCI Money Market tiene garantía del Estado, así que es la opción más segura de las tres.", correcta: false, trampa: "Los fondos de inversión NO tienen garantía del Estado. Lo que los hace seguros es que invierten en activos muy cortos y líquidos, y los activos del fondo están separados del patrimonio de la gestora. Pero un fondo puede perder valor si sus activos bajan." },
+          { texto: "La caución y la LECAP son emitidas por el Tesoro nacional, así que tienen el mismo riesgo.", correcta: false, trampa: "No son lo mismo. La caución es un préstamo entre partes privadas dentro del mercado, garantizado con activos financieros. La LECAP sí es del Tesoro. Son mecanismos e instrumentos completamente distintos." }
+        ]
+      },
+      {
+        titulo: "Paso 3 — ¿Qué le recomendás a esta clienta puntualmente?",
+        instruccion: "La clienta tiene $500.000, plazo de 30 días, y es conservadora. Marcá todas las afirmaciones que forman parte de una buena recomendación:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Si la clienta está segura de que no va a tocar la plata en 30 días, la caución o la LECAP son opciones razonables — dan algo de certeza de tasa y el plazo calza con su horizonte.", correcta: true },
+          { texto: "Si la clienta no está 100% segura del plazo o podría necesitar el dinero de improviso, el money market es más conveniente por la flexibilidad de rescatar cualquier día.", correcta: true },
+          { texto: "Para una clienta conservadora con solo 30 días disponibles, tiene sentido priorizar la flexibilidad sobre el último punto de tasa — la diferencia de rendimiento entre las tres opciones en un mes es muy chica.", correcta: true },
+          { texto: "Hay que ofrecerle la caución siempre porque es la única opción profesional — los fondos son para inversores sofisticados.", correcta: false, trampa: "Los FCI money market son exactamente para inversores conservadores de corto plazo. Son uno de los instrumentos más usados para 'estacionar' liquidez y están disponibles para cualquier inversor, no solo para sofisticados." }
+        ]
+      }
+    ]
+  },
+
+  {
+    id: "arbol-05",
+    titulo: "Pesos en riesgo — ¿me cubro con tasa fija, CER o dollar-linked?",
+    dificultad: "intermedia",
+    contexto: `Una clienta tiene pesos y quiere invertirlos, pero le preocupan dos cosas distintas: la inflación (que los pesos pierdan valor) y una posible devaluación del dólar oficial (que el dólar suba mucho). Hay tres tipos de bonos en pesos que atacan esos problemas de forma distinta. Entender cuál sirve para qué es una de las cosas más importantes para trabajar en el mercado argentino.`,
+    tabla: {
+      titulo: "Los tres tipos de cobertura en pesos",
+      columnas: ["Instrumento", "¿A qué ajusta?", "¿Qué cubre?", "¿Qué NO cubre?"],
+      filas: [
+        ["LECAP (tasa fija)", "Nada — tasa fija desde el inicio", "Certeza: sabés exactamente cuánto vas a ganar", "Si la inflación o el dólar suben más de lo esperado, te quedás corta"],
+        ["Bono CER", "Inflación (índice de precios IPC)", "El capital sube con la inflación — no perdés poder adquisitivo real", "Una devaluación del dólar (si el dólar sube más que la inflación, el CER no alcanza)"],
+        ["Bono dollar-linked", "Tipo de cambio oficial (dólar BNA)", "Si el dólar oficial sube, tu capital sube igual", "Inflación en pesos (si la inflación supera la devaluación oficial, perdés en términos reales)"]
+      ],
+      destacada: [],
+      nota: "En Argentina es común confundir estos tres. La pregunta clave siempre es: ¿de qué riesgo puntual se quiere cubrir el cliente?"
+    },
+    pasos: [
+      {
+        titulo: "Paso 1 — ¿Qué problema tiene la clienta que querés resolver?",
+        instruccion: "Antes de elegir el instrumento, hay que entender el miedo real de la clienta. Marcá todas las afirmaciones correctas:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Si la clienta dice 'me da miedo la inflación, no quiero que mis pesos pierdan valor', el instrumento que más directamente ataca ese problema es el bono CER, que ajusta el capital por el índice de precios.", correcta: true },
+          { texto: "Si la clienta dice 'me da miedo que el dólar explote', el bono dollar-linked es el que cubre ese riesgo puntual — pero ojo: cubre el dólar oficial, no necesariamente el dólar MEP o CCL.", correcta: true },
+          { texto: "CER y dollar-linked son básicamente lo mismo porque 'los dos te protegen en Argentina'.", correcta: false, trampa: "Son coberturas completamente distintas. El CER cubre inflación (IPC); el dollar-linked cubre el tipo de cambio oficial. En Argentina suele haber períodos donde la inflación supera la devaluación y viceversa — elegir mal puede dejarte sin cobertura del riesgo que en realidad te preocupa." },
+          { texto: "La tasa fija (LECAP) puede convenir si la clienta cree que la inflación y el dólar van a bajar más de lo que el mercado espera — en ese caso, asegurarse una tasa alta hoy puede ser buen negocio.", correcta: true }
+        ]
+      },
+      {
+        titulo: "Paso 2 — Las trampas conceptuales más comunes",
+        instruccion: "Marcá todas las afirmaciones que son correctas:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Un bono CER 'garantiza' no perder poder adquisitivo bajo ninguna circunstancia.", correcta: false, trampa: "El CER indexa el capital por inflación, pero el precio de mercado del bono puede bajar por otros motivos (cambios en tasas reales, riesgo político, poca demanda). 'Protege contra inflación' no es lo mismo que 'garantiza que nunca pierdas'." },
+          { texto: "Si el dato de inflación de mayo fue 2,1% y la LECAP rinde 1,80% mensual, la tasa fija perdería contra la inflación ese mes. Pero lo que importa para decidir hoy es la inflación que se espera para los próximos meses, no la del mes pasado.", correcta: true },
+          { texto: "El bono dollar-linked es lo mismo que tener dólares en la mano.", correcta: false, trampa: "No: el bono dollar-linked está en pesos y ajusta según el tipo de cambio oficial. Si el dólar oficial sube un 10%, tu capital sube un 10% en pesos — pero no tenés dólares físicos. Y si hay brecha cambiaria, el dólar que vos 'ves' en las noticias (MEP o CCL) puede ser muy distinto al oficial que usa el bono." },
+          { texto: "Para un cliente que no sabe exactamente qué riesgo le preocupa más, puede tener sentido dividir la inversión entre CER y tasa fija, cubriéndose parcialmente de la inflación sin apostar todo a un solo escenario.", correcta: true }
+        ]
+      },
+      {
+        titulo: "Paso 3 — Aplicalo a una situación real",
+        instruccion: "La clienta dice: 'Quiero algo que me proteja de la inflación pero que si el dólar explota no me agarre desprevenida'. Marcá todas las respuestas que forman parte de un buen asesoramiento:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Explicarle que no existe un solo instrumento que cubra perfectamente inflación Y dólar al mismo tiempo sin costo — cada cobertura tiene su precio.", correcta: true },
+          { texto: "Una opción es dividir: una parte en CER (cobertura de inflación) y otra parte en dollar-linked o directamente en dólares (cobertura cambiaria). Así ataca los dos riesgos de forma parcial.", correcta: true },
+          { texto: "Recomendarle el bono dual (que paga lo mejor entre CER o dólar) como solución perfecta sin ninguna contra.", correcta: false, trampa: "El bono dual cubre ambos riesgos, pero esa doble cobertura tiene un costo implícito: el mercado le pone un precio más alto (menor rendimiento) justamente porque ofrece esa opcionalidad. No es gratis ni es 'perfecto'." },
+          { texto: "Antes de elegir, preguntarle cuánto tiempo puede tener la inversión, porque la cobertura que conviene para 3 meses puede ser muy distinta a la que conviene para 12 meses.", correcta: true }
+        ]
+      }
+    ]
+  },
+
+  {
+    id: "arbol-06",
+    titulo: "Un cliente quiere 'algo de Apple' — CEDEAR vs acción directa vs ETF",
+    dificultad: "intermedia",
+    contexto: `Un cliente de 45 años vio que Apple subió mucho y quiere "invertir en Apple". Tiene pesos disponibles y cuenta en Argentina. Hay tres formas distintas de tener exposición a Apple u otras empresas globales desde Argentina, y cada una funciona de manera diferente. Entender la diferencia es clave para no generar expectativas equivocadas.`,
+    tabla: {
+      titulo: "Tres formas de acceder a empresas globales desde Argentina",
+      columnas: ["Opción", "Qué es", "Moneda que pagás", "Riesgo adicional al de la acción"],
+      filas: [
+        ["CEDEAR de Apple (AAPL)", "Certificado que representa la acción de Apple, cotiza en pesos en la bolsa local", "Pesos (o dólares MEP implícitos)", "Tipo de cambio implícito: el precio en pesos combina el precio de Apple en dólares más el tipo de cambio"],
+        ["Acción directa (cuenta exterior)", "Comprás la acción de Apple en NASDAQ con una cuenta en el exterior", "Dólares reales", "Sin riesgo cambiario local adicional, pero necesitás cuenta afuera y dólares disponibles"],
+        ["CEDEAR de ETF (QQQ o SPY)", "Certificado de un fondo que agrupa las 100 empresas tecnológicas más grandes (QQQ) o el S&P 500 (SPY)", "Pesos (o dólares MEP implícitos)", "Igual que el CEDEAR individual + riesgo de cambio — pero más diversificado"]
+      ],
+      destacada: [],
+      nota: "El CEDEAR no es la acción de Apple: es un instrumento local que 'replica' el movimiento de Apple, pero con un componente adicional de tipo de cambio que puede amplificar las ganancias o las pérdidas."
+    },
+    pasos: [
+      {
+        titulo: "Paso 1 — ¿El cliente entiende lo que está comprando con un CEDEAR?",
+        instruccion: "Marcá todas las afirmaciones correctas sobre cómo funciona un CEDEAR:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Cuando el cliente compra el CEDEAR de Apple en pesos, el precio que paga refleja dos cosas al mismo tiempo: cuánto vale Apple en dólares en NASDAQ, y cuánto vale el dólar en el mercado financiero argentino (tipo de cambio implícito).", correcta: true },
+          { texto: "Si Apple sube 10% en dólares pero el peso se fortalece (el dólar baja en Argentina), el CEDEAR podría subir menos del 10%, o incluso quedarse igual, en pesos.", correcta: true },
+          { texto: "Comprar el CEDEAR de Apple es exactamente lo mismo que comprar la acción en NASDAQ — el precio siempre es idéntico.", correcta: false, trampa: "No es idéntico: puede haber pequeñas diferencias de precio entre el CEDEAR y la acción subyacente (se llaman 'arbitrajes' y el mercado los va corrigiendo, pero en el medio pueden existir). Además, el CEDEAR en pesos incluye el tipo de cambio implícito, que no está en el precio de NASDAQ." },
+          { texto: "Para un cliente que quiere 'exposición a tecnología global' sin necesitar una cuenta en el exterior ni dólares físicos, el CEDEAR es una herramienta válida y práctica.", correcta: true }
+        ]
+      },
+      {
+        titulo: "Paso 2 — ¿Apple individual o un ETF del sector?",
+        instruccion: "El cliente insiste en Apple porque 'la conoce'. Marcá todas las afirmaciones correctas sobre este dilema:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Comprar solo Apple es concentrar todo en una sola empresa. Si Apple tiene un trimestre malo o algún problema regulatorio, el cliente lo siente al 100% en su cartera.", correcta: true },
+          { texto: "El CEDEAR del ETF QQQ (que agrupa las 100 empresas tecnológicas más grandes) da exposición al sector sin apostar todo a una sola empresa — Apple representa aproximadamente el 10-12% del QQQ, no el 100%.", correcta: true },
+          { texto: "Como Apple es la empresa más grande del mundo, no puede caer fuerte — es más segura que cualquier otro activo.", correcta: false, trampa: "Tamaño no es lo mismo que seguridad. Apple puede caer fuerte si hay noticias negativas sobre sus ventas, cambios regulatorios, problemas con sus proveedores en Asia, o simplemente si el mercado tecnológico en general cae. Ninguna empresa es 'imposible que baje'." },
+          { texto: "Para un cliente que quiere exposición a tecnología global pero no entiende en profundidad el negocio de Apple, un ETF del sector puede ser más apropiado que concentrarse en una sola empresa.", correcta: true }
+        ]
+      },
+      {
+        titulo: "Paso 3 — ¿Qué le explicás al cliente sobre el riesgo real que está tomando?",
+        instruccion: "Marcá todas las formas correctas de comunicar el riesgo de un CEDEAR a este cliente:",
+        tipo: "multi",
+        opciones: [
+          { texto: "'Cuando comprás el CEDEAR de Apple en pesos, tu inversión puede subir o bajar por dos razones distintas: porque Apple sube o baja en dólares, o porque el dólar sube o baja en Argentina. Las dos cosas mueven el precio.'", correcta: true },
+          { texto: "'Si el dólar sube mucho en Argentina, tu CEDEAR puede subir en pesos aunque Apple esté cayendo en dólares — y eso podría darte una ganancia en pesos que en realidad no refleja que Apple haya ido bien.'", correcta: true },
+          { texto: "'El CEDEAR no tiene riesgo porque Apple es una empresa muy sólida y nunca va a cerrar.'", correcta: false, trampa: "Toda inversión tiene riesgo. El CEDEAR tiene el riesgo de la empresa subyacente más el riesgo del tipo de cambio. Una empresa sólida puede igualmente tener períodos de caída de precio." },
+          { texto: "'Para que sea una buena inversión, necesitás que al menos una de las dos cosas te acompañe: que Apple suba en dólares, o que el dólar suba en Argentina, o idealmente las dos.'", correcta: true }
+        ]
+      }
+    ]
+  },
+
+  {
+    id: "arbol-07",
+    titulo: "Renta variable — tecnología, energía o acciones locales: ¿son iguales?",
+    dificultad: "intermedia",
+    contexto: `Un cliente quiere invertir en acciones por primera vez. Le explicaste que existen acciones de empresas argentinas (que cotizan en la bolsa local) y CEDEARs de empresas del exterior. Ahora pregunta: '¿Qué diferencia hay entre comprar una empresa de tecnología, una de petróleo y un banco argentino? ¿No es todo lo mismo porque son todas acciones?' Esta pregunta parece simple, pero tiene mucho adentro.`,
+    tabla: {
+      titulo: "Tres tipos de acciones y cómo reaccionan ante los mismos eventos",
+      columnas: ["Tipo de acción", "Ejemplo", "¿Qué la hace subir?", "¿Qué la hace bajar?", "¿Cuánto fluctúa?"],
+      filas: [
+        ["Tecnología global (CEDEAR)", "Apple, Google, Nvidia", "Resultados de la empresa, optimismo sobre innovación, baja de tasas en EE.UU.", "Suba de tasas globales, malos resultados, regulación tech", "Mucho — puede subir o bajar 30-40% en un año"],
+        ["Energía / petróleo", "YPF, Vista Oil (local), Exxon (CEDEAR)", "Suba del precio del petróleo, más producción, buenas reservas", "Baja del precio del crudo, regulaciones, conflictos geopolíticos resueltos", "Bastante — muy dependiente del precio del crudo"],
+        ["Banco argentino (acción local)", "GGAL, BBAR, BMA", "Baja del riesgo país, desregulación financiera, crecimiento económico local", "Suba del riesgo país, crisis económica, controles al sistema financiero", "Mucho — muy ligada al contexto político y económico argentino"]
+      ],
+      destacada: [],
+      nota: "Las tres son 'acciones' pero reaccionan a cosas completamente distintas. Tener las tres en cartera es más diversificado que tener tres empresas del mismo sector."
+    },
+    pasos: [
+      {
+        titulo: "Paso 1 — ¿Por qué no son todas iguales?",
+        instruccion: "Marcá todas las afirmaciones correctas sobre las diferencias entre estos tipos de acciones:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Una acción tecnológica global y un banco argentino pueden moverse en direcciones completamente opuestas en la misma semana, porque responden a factores distintos: la primera a las tasas en EE.UU., la segunda al riesgo país de Argentina.", correcta: true },
+          { texto: "Si el precio del petróleo cae a nivel global, eso afecta a YPF o Vista aunque la economía argentina esté andando bien.", correcta: true },
+          { texto: "Como las tres son acciones, si el mercado argentino sube, todas suben igual.", correcta: false, trampa: "No es así. Un CEDEAR de Apple refleja lo que pasa en NASDAQ y el tipo de cambio — no el Merval. Un banco argentino sube con el Merval. Una empresa de petróleo argentina sube con el crudo internacional pero también con el contexto local. Son tres mercados distintos influyendo en cada una." },
+          { texto: "Tener las tres en cartera puede ser mejor que tener tres empresas tecnológicas, porque cuando la tecnología cae, la energía o los bancos pueden estar subiendo — eso suaviza las pérdidas totales.", correcta: true }
+        ]
+      },
+      {
+        titulo: "Paso 2 — El riesgo específico de cada tipo",
+        instruccion: "Marcá todas las afirmaciones correctas:",
+        tipo: "multi",
+        opciones: [
+          { texto: "Las acciones tecnológicas suelen ser las más volátiles del grupo: pueden subir mucho en buenos tiempos (como en 2023-2024 con la fiebre de inteligencia artificial) pero también caer fuerte si los resultados decepcionen o si suben las tasas globales.", correcta: true },
+          { texto: "Las acciones de bancos argentinos tienen el riesgo 'extra' de Argentina: están muy expuestas a lo que pase con el riesgo país, las regulaciones locales y el contexto político. Si Argentina tiene un problema, los bancos suelen ser de los primeros en caer.", correcta: true },
+          { texto: "Las acciones de energía son las más seguras del grupo porque el petróleo siempre sube.", correcta: false, trampa: "El precio del petróleo puede caer mucho y de forma abrupta (pasó en 2020, en 2015-2016, en 2008). Las acciones de energía son volátiles y dependen de un factor externo — el precio del crudo — que ninguna empresa puede controlar." },
+          { texto: "Para un cliente que quiere su primera exposición a acciones, puede tener sentido empezar con un CEDEAR de ETF diversificado (como el SPY que replica el S&P 500) antes de apostar a un sector o empresa específica.", correcta: true }
+        ]
+      },
+      {
+        titulo: "Paso 3 — ¿Cómo se lo explicás a alguien que nunca invirtió en acciones?",
+        instruccion: "Marcá todas las formas correctas de comunicar este tema a un cliente nuevo:",
+        tipo: "multi",
+        opciones: [
+          { texto: "'Las acciones no son todas iguales. Comprar Apple es apostar a que la tecnología sigue creciendo. Comprar GGAL es apostar a que a Argentina le va bien. Comprar YPF es apostar a que el petróleo sube y a que Argentina no mete regulaciones que le peguen a la empresa. Son tres apuestas completamente distintas.'", correcta: true },
+          { texto: "'Todas las acciones suben y bajan juntas, así que no importa cuál elegís — lo que importa es el momento en que entrás.'", correcta: false, trampa: "Eso no es correcto: distintas acciones responden a distintos factores, y es perfectamente posible que tecnología caiga mientras bancos argentinos suben (o viceversa). El momento de entrada importa, pero también importa mucho qué comprás." },
+          { texto: "'Para empezar, puede ser útil pensar qué escenario creés que va a pasar: ¿creés que Argentina va a mejorar? → bancos y acciones locales. ¿Creés que la tecnología global va a seguir creciendo? → CEDEARs de tech. ¿No sabés? → un ETF diversificado puede ser un primer paso más tranquilo.'", correcta: true },
+          { texto: "'Como son tu primera inversión en acciones, lo más importante es que no pongas dinero que vayas a necesitar en el corto plazo — las acciones pueden bajar y quedarse bajas durante meses o años.'", correcta: true }
+        ]
+      }
+    ]
+  }
+];
+
+/* ============================================================
    ESTADO
    ============================================================ */
 let tipoActual = null;
@@ -1150,14 +1606,30 @@ let preguntaActual = 0;
 let feedbackVisible = false;
 let escenarios = [];
 
+// Estado específico del árbol de decisión
+let arbolState = {
+  pasoActivo: 0,          // qué paso está desbloqueado ahora
+  selecciones: [[], [], []],  // qué opciones marcó en cada paso
+  evaluados: [false, false, false]  // si ya confirmó cada paso
+};
+
+function resetArbolState() {
+  arbolState = { pasoActivo: 0, selecciones: [[], [], []], evaluados: [false, false, false] };
+}
+
 /* ============================================================
    NAVEGACIÓN
    ============================================================ */
 function abrirTipo(tipo) {
   tipoActual = tipo;
-  escenarios = ESCENARIOS[tipo];
+  if (tipo === 'arbol') {
+    escenarios = ESCENARIOS_ARBOL;
+  } else {
+    escenarios = ESCENARIOS[tipo];
+  }
   escenarioActual = 0;
   preguntaActual = 0;
+  resetArbolState();
   document.getElementById('screen-selector').hidden = true;
   document.getElementById('screen-ejercicio').hidden = false;
   renderEjercicio();
@@ -1174,7 +1646,6 @@ function volverSelector() {
    ============================================================ */
 function renderEjercicio() {
   const esc = escenarios[escenarioActual];
-  const preg = esc.preguntas[preguntaActual];
   feedbackVisible = false;
 
   // Nav dots
@@ -1185,6 +1656,16 @@ function renderEjercicio() {
   document.getElementById('navCounter').textContent = `${escenarioActual + 1} / ${escenarios.length}`;
 
   const card = document.getElementById('ejercicioCard');
+
+  // El árbol NO tiene esc.preguntas — hay que manejarlo antes de leer ese campo
+  if (tipoActual === 'arbol') {
+    card.innerHTML = renderArbol(esc);
+    conectarEventosArbol();
+    return;
+  }
+
+  const preg = esc.preguntas[preguntaActual];
+
   card.innerHTML = `
     <div class="ejercicio-meta">
       <span class="tag tag-tipo">${tipoLabel()}</span>
@@ -1197,13 +1678,206 @@ function renderEjercicio() {
     ${renderPreguntaActualHTML(esc, preg)}
   `;
 
-  if (esc.curva) {
-    setTimeout(() => dibujarCurva(esc), 50);
-  }
+  // SVG generado inline en renderCurvaContainer — no necesita setTimeout
 }
 
 function tipoLabel() {
-  return { curva: 'Curva de bonos', caja: 'Caja de puntas', rotacion: 'Decisión de rotación' }[tipoActual];
+  return { curva: 'Curva de bonos', caja: 'Caja de puntas', rotacion: 'Decisión de rotación', arbol: '¿Qué hago si…?' }[tipoActual];
+}
+
+/* ============================================================
+   RENDERIZADO DEL ÁRBOL DE DECISIÓN
+   ============================================================ */
+function renderArbol(esc) {
+  // Tabla de contexto
+  const tablaHTML = `
+    <div class="bopreal-contexto">
+      <div class="bopreal-titulo">${esc.tabla.titulo}</div>
+      <table class="bopreal-tabla">
+        <thead><tr>${esc.tabla.columnas.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+        <tbody>
+          ${esc.tabla.filas.map((fila, i) => `
+            <tr class="${esc.tabla.destacada.includes(i) ? 'destacado' : ''}">
+              ${fila.map(celda => `<td>${celda}</td>`).join('')}
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      ${esc.tabla.nota ? `<div style="margin-top:.75rem;font-size:.82rem;color:var(--ink-soft);line-height:1.5"><strong>Nota:</strong> ${esc.tabla.nota}</div>` : ''}
+    </div>
+  `;
+
+  // Pasos — sin onclick inline, usamos data-* para guardar los índices
+  const pasosHTML = esc.pasos.map((paso, pi) => {
+    const estado = arbolState.evaluados[pi] ? 'completado' : (pi === arbolState.pasoActivo ? 'activo' : 'bloqueado');
+    const seleccionadas = arbolState.selecciones[pi] || [];
+    const evaluado = arbolState.evaluados[pi];
+
+    const opcionesHTML = paso.opciones.map((op, oi) => {
+      let clase = 'multi-opcion';
+      let tick = '';
+      let nota = '';
+      const marcada = seleccionadas.includes(oi);
+
+      if (evaluado) {
+        if (marcada && op.correcta)  { clase += ' correcta-marcada'; tick = '✓'; }
+        if (marcada && !op.correcta) { clase += ' incorrecta-marcada'; tick = '✕'; }
+        if (!marcada && op.correcta) { clase += ' correcta-no-marcada'; }
+        clase += ' bloqueada';
+        if (!op.correcta && op.trampa) {
+          nota = `<div style="margin-top:.4rem;font-size:.82rem;color:var(--terracotta-deep);font-style:italic">⚠ ${op.trampa}</div>`;
+        }
+        if (!marcada && op.correcta) {
+          nota += `<div style="margin-top:.4rem;font-size:.82rem;color:#7E5C1A;font-style:italic">↑ Esta también era correcta.</div>`;
+        }
+      } else {
+        if (marcada) clase += ' seleccionada';
+      }
+
+      // data-paso y data-opcion en vez de onclick inline
+      return `
+        <div class="${clase}" data-paso="${pi}" data-opcion="${oi}" role="checkbox" aria-checked="${marcada}">
+          <div class="checkbox-visual"><span class="checkbox-tick">${tick || (marcada && !evaluado ? '✓' : '')}</span></div>
+          <div>
+            <div class="multi-opcion-texto">${op.texto}</div>
+            ${nota}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Resultado del paso
+    let resultadoHTML = '';
+    if (evaluado) {
+      const correctas = paso.opciones.filter(o => o.correcta).length;
+      const acertadas = seleccionadas.filter(i => paso.opciones[i].correcta).length;
+      const falsas = seleccionadas.filter(i => !paso.opciones[i].correcta).length;
+      const noMarcadas = paso.opciones.filter((o, i) => o.correcta && !seleccionadas.includes(i)).length;
+
+      let claseRes, msg;
+      if (falsas === 0 && noMarcadas === 0) {
+        claseRes = 'bien'; msg = `✓ Perfecto — marcaste exactamente las ${correctas} opciones correctas.`;
+      } else if (falsas === 0 && noMarcadas > 0) {
+        claseRes = 'parcial'; msg = `Bien encaminada — no marcaste ninguna incorrecta, pero te faltaron ${noMarcadas} correcta${noMarcadas > 1 ? 's' : ''}. Están marcadas en amarillo arriba.`;
+      } else if (acertadas > 0 && falsas > 0) {
+        claseRes = 'parcial'; msg = `Acertaste ${acertadas} de ${correctas}${noMarcadas > 0 ? `, te faltaron ${noMarcadas}` : ''} y marcaste ${falsas} incorrecta${falsas > 1 ? 's' : ''}. Revisá las explicaciones en rojo.`;
+      } else {
+        claseRes = 'mal'; msg = `Marcaste ${falsas} opción${falsas > 1 ? 'es' : ''} incorrecta${falsas > 1 ? 's' : ''}. Leé las explicaciones — están en rojo arriba.`;
+      }
+      resultadoHTML = `<div class="resultado-multi ${claseRes}">${msg}</div>`;
+
+      if (pi < esc.pasos.length - 1) {
+        resultadoHTML += `<div class="btn-row" style="margin-top:.85rem">
+          <button class="btn btn-primary js-avanzar" data-siguiente="${pi + 1}">Siguiente paso →</button>
+        </div>`;
+      } else {
+        resultadoHTML += `<div class="btn-row" style="margin-top:.85rem">
+          <button class="btn btn-outline js-escenario" data-idx="${(escenarioActual + 1) % escenarios.length}">
+            ${escenarioActual < escenarios.length - 1 ? 'Siguiente escenario →' : '↺ Volver al primero'}
+          </button>
+        </div>`;
+      }
+    } else if (pi === arbolState.pasoActivo) {
+      resultadoHTML = `<div class="btn-row" style="margin-top:.85rem">
+        <button class="btn btn-primary js-evaluar" data-paso="${pi}">Confirmar selección</button>
+      </div>`;
+    }
+
+    return `
+      <div class="arbol-paso ${estado}" id="paso-${pi}">
+        <div class="paso-header">
+          <div class="paso-num">${evaluado ? '✓' : pi + 1}</div>
+          <div class="paso-titulo">${paso.titulo}</div>
+        </div>
+        <div class="paso-body">
+          <div class="multi-instruccion">${paso.instruccion}</div>
+          ${opcionesHTML}
+          ${resultadoHTML}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const navAnterior = escenarioActual > 0
+    ? `<button class="btn btn-outline js-escenario" data-idx="${escenarioActual - 1}">← Escenario anterior</button>`
+    : '';
+
+  return `
+    <div class="ejercicio-meta">
+      <span class="tag tag-tipo">${tipoLabel()}</span>
+      <span class="tag tag-dif">${esc.dificultad}</span>
+    </div>
+    <div class="ejercicio-titulo">${esc.titulo}</div>
+    <div class="contexto-box">${esc.contexto}</div>
+    ${tablaHTML}
+    <div class="arbol-pasos">${pasosHTML}</div>
+    <div class="btn-row" style="margin-top:.5rem">${navAnterior}</div>
+  `;
+}
+
+// Conectar los eventos del árbol DESPUÉS de insertar el HTML en el DOM
+function conectarEventosArbol() {
+  // Opciones clickeables (toggle selección)
+  document.querySelectorAll('.multi-opcion:not(.bloqueada)').forEach(el => {
+    el.addEventListener('click', function() {
+      const pi = parseInt(this.dataset.paso);
+      const oi = parseInt(this.dataset.opcion);
+      const sel = arbolState.selecciones[pi];
+      const pos = sel.indexOf(oi);
+      if (pos === -1) sel.push(oi); else sel.splice(pos, 1);
+      renderEjercicio();
+    });
+  });
+
+  // Botón confirmar paso
+  document.querySelectorAll('.js-evaluar').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const pi = parseInt(this.dataset.paso);
+      arbolState.evaluados[pi] = true;
+      renderEjercicio();
+      setTimeout(() => {
+        const paso = document.getElementById('paso-' + pi);
+        if (paso && paso.scrollIntoView) paso.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
+    });
+  });
+
+  // Botón avanzar al siguiente paso
+  document.querySelectorAll('.js-avanzar').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const sig = parseInt(this.dataset.siguiente);
+      arbolState.pasoActivo = sig;
+      renderEjercicio();
+      setTimeout(() => {
+        const paso = document.getElementById('paso-' + sig);
+        if (paso && paso.scrollIntoView) paso.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    });
+  });
+
+  // Botón ir a escenario (siguiente / anterior)
+  document.querySelectorAll('.js-escenario').forEach(btn => {
+    btn.addEventListener('click', function() {
+      irAEscenario(parseInt(this.dataset.idx));
+    });
+  });
+}
+
+function toggleOpcion(pasoIdx, opIdx) {
+  const sel = arbolState.selecciones[pasoIdx];
+  const pos = sel.indexOf(opIdx);
+  if (pos === -1) sel.push(opIdx); else sel.splice(pos, 1);
+  renderEjercicio();
+}
+
+function evaluarPaso(pasoIdx) {
+  arbolState.evaluados[pasoIdx] = true;
+  renderEjercicio();
+}
+
+function avanzarPaso(pasoIdx) {
+  arbolState.pasoActivo = pasoIdx;
+  renderEjercicio();
 }
 
 /* ============================================================
@@ -1221,15 +1895,13 @@ function renderCurvaContainer(esc) {
   return `
     <div class="curva-container">
       <div class="curva-titulo">${esc.titulo}</div>
-      <svg id="curvaSVG" class="curva-svg" viewBox="0 0 680 320"></svg>
+      ${generarSVG(esc.curva)}
     </div>
   `;
 }
 
-function dibujarCurva(esc) {
-  const svg = document.getElementById('curvaSVG');
-  if (!svg) return;
-  const { xMin, xMax, yMin, yMax, xLabel, yLabel, series } = esc.curva;
+function generarSVG(curva) {
+  const { xMin, xMax, yMin, yMax, xLabel, yLabel, series } = curva;
 
   const W = 680, H = 320, pad = { top: 24, right: 20, bot: 52, left: 58 };
   const pw = W - pad.left - pad.right;
@@ -1325,7 +1997,7 @@ function dibujarCurva(esc) {
     lx += Math.min(240, (W - pad.left - pad.right) / series.length);
   });
 
-  svg.innerHTML = `<g>${g}</g>`;
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;overflow:visible;display:block"><g>${g}</g></svg>`;
 }
 
 /* ---- Caja de puntas ---- */
@@ -1483,7 +2155,9 @@ function mostrarFeedback(clase, titulo, texto) {
 function irAEscenario(idx) {
   escenarioActual = idx;
   preguntaActual = 0;
+  resetArbolState();
   renderEjercicio();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function irAPregunta(idx) {
